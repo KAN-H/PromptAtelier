@@ -7,8 +7,9 @@
 | **Phase A: 基础框架与 i18n 基建** | ✅ 完成 | 2026-03-05 |
 | **Phase B2: 设计助手三栏布局** | ✅ 完成 | 2026-03-06 |
 | **Phase C: Zen 全量优化 + Qwen3.5** | ✅ 完成 | 2026-03-07 |
+| **Phase D: CI 修复 + 合并冲突解决** | ✅ 完成 | 2026-03-16 |
 
-**测试统计：20 个测试套件，545 项测试全部通过 ✅** 最后更新: 2026-03-07 | v6.0.0-alpha (Phase C)
+**测试统计：20 个测试套件，545 项测试全部通过 ✅** 最后更新: 2026-03-16 | v6.0.0-alpha (Phase D)
 
 ## 📊 总体进度
 
@@ -30,8 +31,30 @@
 | **Phase A: 基础框架与 i18n 基建** | ✅ 完成 | 2026-03-05 |
 | **Phase B2: 设计助手三栏布局** | ✅ 完成 | 2026-03-06 |
 | **Phase C: Zen 全量优化 + Qwen3.5** | ✅ 完成 | 2026-03-07 |
+| **Phase D: CI 修复 + 合并冲突解决** | ✅ 完成 | 2026-03-16 |
 
 **测试统计：20 个测试套件，545 项测试全部通过 ✅**
+
+---
+
+## 🔧 Phase D: CI 修复 + 合并冲突解决 (2026-03-16) — v6.0.0-alpha
+
+### D.1 合并冲突解决
+- ✅ 合并 `origin/main` 到 `feature/zen-workspace-i18n-v6`（含 PR #9 safetyService 修复、#10 semantic-release、#11 README 双语）
+- ✅ `package.json`：手动合并保留 `supertest` + `semantic-release` 全家桶
+- ✅ `skills/index.json`：采用 ours（PromptAtelier 品牌 + 最新日期）
+- ✅ `README.md`：采用 ours + 追加 semantic-release 自动化发布章节
+- ✅ `package-lock.json`：删除后重新生成（32 个冲突标记）
+
+### D.2 CI 修复（Node 20.x sharp 崩溃）
+- ✅ `.github/workflows/nodejs-tests.yml`：`npm ci --omit=optional` 跳过可选依赖
+- ✅ `server.js`：添加 `uncaughtException` 处理器，捕获 sharp/node-llama-cpp/onnxruntime 异步错误
+- ✅ 添加 `workflow_dispatch` 触发器支持手动运行 CI
+
+### D.3 结果
+- ✅ PR #8：`mergeable: true`, `mergeable_state: clean`
+- ✅ CI：Node 20.x ✅ + Node 22.x ✅ — 双矩阵全绿
+- ✅ 本地测试：20 套件 / 545 测试全通过
 
 ---
 
