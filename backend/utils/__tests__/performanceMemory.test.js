@@ -177,7 +177,7 @@ describe('Phase 17 — 性能与内存优化测试', () => {
         test('generate 在模型未加载时应抛出明确错误', async () => {
             await expect(manager.generate('test'))
                 .rejects
-                .toThrow('生成模型未加载');
+                .toThrow('没有可用的生成模型');
         });
 
         test('classify 在模型未加载且按需加载失败时应抛出', async () => {

@@ -1,6 +1,6 @@
 {
   "name": "prompt-atelier",
-  "version": "5.0.0",
+  "version": "6.0.0-alpha",
   "description": "PromptAtelier - 智能提示词生成器 · 专业设计提示词工作台",
   "main": "backend/server.js",
   "bin": "backend/server.js",
@@ -20,14 +20,16 @@
   "author": "PromptAtelier Team",
   "license": "MIT",
   "dependencies": {
-    "@huggingface/transformers": "^3.4.0",
     "ajv": "^8.17.1",
     "compression": "^1.7.4",
     "cors": "^2.8.5",
     "express": "^4.18.2",
     "js-yaml": "^4.1.1",
-    "node-llama-cpp": "^3.17.1",
     "open": "8.4.2"
+  },
+  "optionalDependencies": {
+    "@huggingface/transformers": "^3.4.0",
+    "node-llama-cpp": "^3.17.1"
   },
   "devDependencies": {
     "jest": "^30.2.0",

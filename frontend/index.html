@@ -373,29 +373,32 @@
         <div x-show="activeTab === 'skills'" x-transition:enter="transition ease-out duration-300" class="zen-tab-full">
             
             <div class="text-center mb-8">
-                <h1 class="text-4xl font-bold text-primary mb-2" x-text="$store.i18n.t('skills.title')"></h1>
-                <p class="text-lg opacity-75" x-text="$store.i18n.t('skills.subtitle')"></p>
+                <h1 class="zen-section-title justify-center" style="font-size:1.35rem;margin-bottom:4px">
+                    <i data-lucide="brain" class="lucide-lg"></i>
+                    <span x-text="$store.i18n.t('skills.title')"></span>
+                </h1>
+                <p class="zen-section-subtitle text-center" x-text="$store.i18n.t('skills.subtitle')"></p>
             </div>
 
             <!-- Skills Stats -->
             <div class="stats shadow mb-6 w-full">
                 <div class="stat">
                     <div class="stat-figure text-primary">
-                        <span class="text-3xl">🧠</span>
+                        <i data-lucide="brain" class="lucide-xl"></i>
                     </div>
                     <div class="stat-title" x-text="$store.i18n.t('skills.totalSkills')"></div>
                     <div class="stat-value text-primary" x-text="skills.length"></div>
                 </div>
                 <div class="stat">
                     <div class="stat-figure text-success">
-                        <span class="text-3xl">✅</span>
+                        <i data-lucide="check-circle" class="lucide-xl"></i>
                     </div>
                     <div class="stat-title" x-text="$store.i18n.t('skills.enabled')"></div>
                     <div class="stat-value text-success" x-text="skills.filter(s => s.enabled).length"></div>
                 </div>
                 <div class="stat">
                     <div class="stat-figure text-secondary">
-                        <span class="text-3xl">🏷️</span>
+                        <i data-lucide="tag" class="lucide-xl"></i>
                     </div>
                     <div class="stat-title" x-text="$store.i18n.t('skills.totalTriggers')"></div>
                     <div class="stat-value text-secondary" x-text="skills.reduce((sum, s) => sum + (s.triggers?.length || 0), 0)"></div>
@@ -406,21 +409,24 @@
             <div class="flex justify-between items-center mb-6">
                 <div class="flex gap-2">
                     <button class="btn btn-primary btn-sm gap-2" @click="showCreateSkillModal = true">
-                        <span>➕</span> <span x-text="$store.i18n.t('skills.createNew')"></span>
+                        <i data-lucide="plus" class="lucide-sm"></i> <span x-text="$store.i18n.t('skills.createNew')"></span>
                     </button>
                     <label class="btn btn-outline btn-sm gap-2">
-                        <span>📥</span> <span x-text="$store.i18n.t('skills.importJson')"></span>
+                        <i data-lucide="download" class="lucide-sm"></i> <span x-text="$store.i18n.t('skills.importJson')"></span>
                         <input type="file" class="hidden" accept=".json" @change="importSkillFromFile($event)" />
                     </label>
                     <button class="btn btn-outline btn-sm gap-2" @click="rescanSkills" :disabled="skillsLoading">
-                        <span x-show="!skillsLoading">🔄</span>
+                        <i x-show="!skillsLoading" data-lucide="refresh-cw" class="lucide-sm"></i>
                         <span x-show="skillsLoading" class="loading loading-spinner loading-xs"></span>
                         <span x-text="$store.i18n.t('skills.rescan')"></span>
                     </button>
                 </div>
                 <div class="form-control">
-                    <input type="text" :placeholder="'🔍 ' + $store.i18n.t('skills.searchPlaceholder')" class="input input-bordered input-sm w-64"
-                           x-model="skillSearch" />
+                    <div class="relative">
+                        <i data-lucide="search" class="lucide-sm absolute left-3 top-1/2 -translate-y-1/2 opacity-40"></i>
+                        <input type="text" :placeholder="$store.i18n.t('skills.searchPlaceholder')" class="input input-bordered input-sm w-64 pl-9"
+                               x-model="skillSearch" />
+                    </div>
                 </div>
             </div>
 
@@ -434,8 +440,8 @@
                             <div class="flex justify-between items-start">
                                 <div class="flex items-center gap-3">
                                     <div class="avatar placeholder">
-                                        <div class="bg-primary text-primary-content rounded-full w-12">
-                                            <span class="text-xl">🧠</span>
+                                        <div class="bg-primary text-primary-content rounded-full w-12 flex items-center justify-center">
+                                            <i data-lucide="brain" class="lucide-lg"></i>
                                         </div>
                                     </div>
                                     <div>
@@ -453,7 +459,7 @@
 
                             <!-- Triggers -->
                             <div class="mt-3">
-                                <p class="text-xs font-medium mb-1 opacity-60">🎯 <span x-text="$store.i18n.t('skills.triggers')"></span></p>
+                                <p class="text-xs font-medium mb-1 opacity-60"><i data-lucide="crosshair" class="lucide-xs inline align-text-bottom"></i> <span x-text="$store.i18n.t('skills.triggers')"></span></p>
                                 <div class="flex flex-wrap gap-1">
                                     <template x-for="trigger in skill.triggers?.slice(0, 4)" :key="trigger">
                                         <span class="badge badge-outline badge-xs" x-text="trigger"></span>
@@ -474,17 +480,17 @@
 
                             <!-- Actions -->
                             <div class="card-actions justify-end mt-4">
-                                <button class="btn btn-ghost btn-xs" @click="viewSkillDetail(skill.id)">
-                                    👁️ <span x-text="$store.i18n.t('actions.view')"></span>
+                                <button class="btn btn-ghost btn-xs gap-1" @click="viewSkillDetail(skill.id)">
+                                    <i data-lucide="eye" class="lucide-xs"></i> <span x-text="$store.i18n.t('actions.view')"></span>
                                 </button>
-                                <button class="btn btn-ghost btn-xs" @click="editSkill(skill.id)">
-                                    ✏️ <span x-text="$store.i18n.t('actions.edit')"></span>
+                                <button class="btn btn-ghost btn-xs gap-1" @click="editSkill(skill.id)">
+                                    <i data-lucide="pencil" class="lucide-xs"></i> <span x-text="$store.i18n.t('actions.edit')"></span>
                                 </button>
-                                <button class="btn btn-ghost btn-xs" @click="exportSkill(skill.id)">
-                                    📤 <span x-text="$store.i18n.t('actions.export')"></span>
+                                <button class="btn btn-ghost btn-xs gap-1" @click="exportSkill(skill.id)">
+                                    <i data-lucide="upload" class="lucide-xs"></i> <span x-text="$store.i18n.t('actions.export')"></span>
                                 </button>
-                                <button class="btn btn-ghost btn-xs text-error" @click="confirmDeleteSkill(skill)">
-                                    🗑️ <span x-text="$store.i18n.t('actions.delete')"></span>
+                                <button class="btn btn-ghost btn-xs gap-1 text-error" @click="confirmDeleteSkill(skill)">
+                                    <i data-lucide="trash-2" class="lucide-xs"></i> <span x-text="$store.i18n.t('actions.delete')"></span>
                                 </button>
                             </div>
                         </div>
@@ -494,10 +500,10 @@
 
             <!-- Empty State -->
             <div class="text-center py-12" x-show="filteredSkills.length === 0 && !skillsLoading">
-                <div class="text-6xl mb-4">🧠</div>
+                <div class="mb-4 flex justify-center"><i data-lucide="brain" class="lucide-xxl opacity-30"></i></div>
                 <p class="text-lg opacity-75 mb-4" x-text="$store.i18n.t('skills.emptyState')"></p>
-                <button class="btn btn-primary" @click="showCreateSkillModal = true">
-                    ➕ <span x-text="$store.i18n.t('skills.createFirst')"></span>
+                <button class="btn btn-primary gap-2" @click="showCreateSkillModal = true" :title="$store.i18n.t('skills.createFirst')">
+                    <i data-lucide="plus" class="lucide-sm"></i> <span x-text="$store.i18n.t('skills.createFirst')"></span>
                 </button>
             </div>
 
@@ -520,7 +526,7 @@
                             <div class="flex items-center gap-3">
                                 <label class="label cursor-pointer gap-2 p-0">
                                     <input type="checkbox" class="toggle toggle-primary toggle-sm" x-model="dynamicUseCustomConfig">
-                                    <span class="label-text font-medium text-sm" x-text="'🔌 ' + $store.i18n.t('dynamic.useCustomApi')"></span>
+                                    <span class="label-text font-medium text-sm flex items-center gap-1"><i data-lucide="plug" class="lucide-sm"></i> <span x-text="$store.i18n.t('dynamic.useCustomApi')"></span></span>
                                 </label>
                                 <span class="badge badge-sm" 
                                       :class="dynamicUseCustomConfig ? 'badge-primary' : 'badge-ghost'"
@@ -535,7 +541,7 @@
                                 <span x-text="showDynamicConfigPanel ? ('▲ ' + $store.i18n.t('dynamic.collapseConfig')) : ('▼ ' + $store.i18n.t('dynamic.expandConfig'))"></span>
                             </button>
                         </div>
-                        <p class="text-xs opacity-50 mt-1" x-show="!dynamicUseCustomConfig" x-text="'💡 ' + $store.i18n.t('dynamic.apiTip')">
+                        <p class="text-xs opacity-50 mt-1 flex items-center gap-1" x-show="!dynamicUseCustomConfig"><i data-lucide="lightbulb" class="lucide-xs"></i> <span x-text="$store.i18n.t('dynamic.apiTip')"></span>
                         </p>
 
                         <!-- 展开的独立配置面板 -->
@@ -566,7 +572,7 @@
                                         <span class="label-text text-xs" x-text="$store.i18n.t('settings.selectModel')"></span>
                                         <button type="button" class="btn btn-xs btn-ghost gap-0.5" 
                                                 @click="refreshDynamicModels()" :disabled="dynamicModelsLoading">
-                                            <span x-show="!dynamicModelsLoading">🔄</span>
+                                            <i x-show="!dynamicModelsLoading" data-lucide="refresh-cw" class="lucide-xs"></i>
                                             <span x-show="dynamicModelsLoading" class="loading loading-spinner loading-xs"></span>
                                             <span class="text-xs" x-text="dynamicModelsLoading ? '...' : $store.i18n.t('actions.refresh')"></span>
                                         </button>
@@ -588,7 +594,7 @@
                                 </div>
                             </div>
                             <div class="flex justify-end mt-2">
-                                <button class="btn btn-primary btn-xs" @click="saveDynamicDesignConfig()">💾 <span x-text="$store.i18n.t('dynamic.saveConfig')"></span></button>
+                                <button class="btn btn-primary btn-xs gap-1" @click="saveDynamicDesignConfig()"><i data-lucide="save" class="lucide-xs"></i> <span x-text="$store.i18n.t('dynamic.saveConfig')"></span></button>
                             </div>
                         </div>
                     </div>
@@ -597,7 +603,7 @@
                 <!-- �🚪 独立入口：简化输入面板（仅独立模式显示） -->
                 <div x-show="!dynamicDesignFromAssistant" class="card bg-base-100 shadow-xl mb-6">
                     <div class="card-body">
-                        <h2 class="card-title text-lg" x-text="'🎬 ' + $store.i18n.t('dynamic.title')"></h2>
+                        <h2 class="card-title text-lg flex items-center gap-2"><i data-lucide="clapperboard" class="lucide-lg"></i> <span x-text="$store.i18n.t('dynamic.title')"></span></h2>
                         <p class="text-sm opacity-70" x-text="$store.i18n.t('dynamic.subtitle')"></p>
                         
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
@@ -650,7 +656,7 @@
                 <div x-show="dynamicDesignFromAssistant" class="alert alert-info mb-6 shadow-lg">
                     <div class="flex items-center justify-between w-full">
                         <div>
-                            <span class="font-bold" x-text="'📋 ' + $store.i18n.t('dynamic.fromAssistant')"></span>
+                            <span class="font-bold flex items-center gap-1"><i data-lucide="clipboard" class="lucide-sm"></i> <span x-text="$store.i18n.t('dynamic.fromAssistant')"></span></span>
                             <span class="text-sm ml-2" x-text="dynamicAssistantSummary"></span>
                         </div>
                         <button class="btn btn-ghost btn-sm" @click="clearDynamicAssistantData()">✕ <span x-text="$store.i18n.t('dynamic.clearAssistant')"></span></button>
@@ -660,7 +666,7 @@
                 <!-- 🎭 动画效果配置 -->
                 <div class="card bg-base-100 shadow-xl mb-6">
                     <div class="card-body">
-                        <h3 class="font-bold text-md" x-text="'🎭 ' + $store.i18n.t('dynamic.animationEffects')"></h3>
+                        <h3 class="font-bold text-md flex items-center gap-2"><i data-lucide="sparkles" class="lucide-md"></i> <span x-text="$store.i18n.t('dynamic.animationEffects')"></span></h3>
                         <div class="flex flex-wrap gap-2 mt-2">
                             <template x-for="(effect, key) in dynamicAnimationEffects" :key="key">
                                 <label class="label cursor-pointer gap-2 p-2 rounded-lg border border-base-300 hover:border-primary transition-colors"
@@ -675,7 +681,7 @@
                         </div>
                         <div class="grid grid-cols-3 gap-4 mt-3">
                             <div class="form-control">
-                                <label class="label py-1"><span class="label-text text-sm" x-text="'⏱️ ' + $store.i18n.t('dynamic.duration')"></span></label>
+                                <label class="label py-1"><span class="label-text text-sm flex items-center gap-1"><i data-lucide="timer" class="lucide-xs"></i> <span x-text="$store.i18n.t('dynamic.duration')"></span></span></label>
                                 <select class="select select-bordered select-sm" x-model="dynamicParams.animation.duration">
                                     <option value="0.5s" x-text="$store.i18n.t('animOptions.fast')"></option>
                                     <option value="1s" x-text="$store.i18n.t('animOptions.standard')"></option>
@@ -685,7 +691,7 @@
                                 </select>
                             </div>
                             <div class="form-control">
-                                <label class="label py-1"><span class="label-text text-sm" x-text="'🔄 ' + $store.i18n.t('dynamic.easing')"></span></label>
+                                <label class="label py-1"><span class="label-text text-sm flex items-center gap-1"><i data-lucide="rotate-cw" class="lucide-xs"></i> <span x-text="$store.i18n.t('dynamic.easing')"></span></span></label>
                                 <select class="select select-bordered select-sm" x-model="dynamicParams.animation.easing">
                                     <option value="ease" x-text="$store.i18n.t('animOptions.easeDefault')"></option>
                                     <option value="ease-in-out" x-text="$store.i18n.t('animOptions.easeInOut')"></option>
@@ -694,7 +700,7 @@
                                 </select>
                             </div>
                             <div class="form-control">
-                                <label class="label py-1"><span class="label-text text-sm" x-text="'♾️ ' + $store.i18n.t('dynamic.loop')"></span></label>
+                                <label class="label py-1"><span class="label-text text-sm flex items-center gap-1"><i data-lucide="infinity" class="lucide-xs"></i> <span x-text="$store.i18n.t('dynamic.loop')"></span></span></label>
                                 <select class="select select-bordered select-sm" x-model="dynamicParams.animation.loop">
                                     <option value="1" x-text="$store.i18n.t('animOptions.once')"></option>
                                     <option value="3" x-text="$store.i18n.t('animOptions.threeTimes')"></option>
@@ -707,8 +713,8 @@
                                     @click="generateDynamicDesign()"
                                     :class="{'loading': dynamicLoading}"
                                     :disabled="dynamicLoading">
-                                <span x-show="!dynamicLoading" x-text="'🎬 ' + $store.i18n.t('dynamic.generateBtn')"></span>
-                                <span x-show="dynamicLoading" x-text="'⏳ ' + $store.i18n.t('dynamic.generatingBtn')"></span>
+                                <span x-show="!dynamicLoading" class="flex items-center gap-1"><i data-lucide="clapperboard" class="lucide-sm"></i> <span x-text="$store.i18n.t('dynamic.generateBtn')"></span></span>
+                                <span x-show="dynamicLoading" class="flex items-center gap-1"><i data-lucide="loader" class="lucide-sm animate-spin"></i> <span x-text="$store.i18n.t('dynamic.generatingBtn')"></span></span>
                             </button>
                         </div>
                     </div>
@@ -721,10 +727,10 @@
                         <div class="card bg-base-100 shadow-xl">
                             <div class="card-body p-4">
                                 <div class="flex justify-between items-center mb-2">
-                                    <h3 class="font-bold" x-text="'👁 ' + $store.i18n.t('dynamic.preview')"></h3>
+                                    <h3 class="font-bold flex items-center gap-1"><i data-lucide="eye" class="lucide-sm"></i> <span x-text="$store.i18n.t('dynamic.preview')"></span></h3>
                                     <div class="flex gap-1">
-                                        <button class="btn btn-ghost btn-xs" @click="refreshDynamicPreview()" :title="$store.i18n.t('dynamic.refreshPreview')">🔄</button>
-                                        <button class="btn btn-ghost btn-xs" @click="toggleDynamicFullscreen()" :title="$store.i18n.t('dynamic.fullscreen')">⛶</button>
+                                        <button class="btn btn-ghost btn-xs" @click="refreshDynamicPreview()" :title="$store.i18n.t('dynamic.refreshPreview')"><i data-lucide="refresh-cw" class="lucide-sm"></i></button>
+                                        <button class="btn btn-ghost btn-xs" @click="toggleDynamicFullscreen()" :title="$store.i18n.t('dynamic.fullscreen')"><i data-lucide="maximize" class="lucide-sm"></i></button>
                                     </div>
                                 </div>
                                 <div class="border border-base-300 rounded-lg overflow-hidden bg-white" 
@@ -742,7 +748,7 @@
                                 </div>
                                 <!-- 安全警告 -->
                                 <div x-show="dynamicSafetyWarnings.length > 0" class="alert alert-warning mt-2 text-sm py-2">
-                                    <span>⚠️ <span x-text="dynamicSafetyWarnings.join(', ')"></span></span>
+                                    <span class="flex items-center gap-1"><i data-lucide="alert-triangle" class="lucide-sm text-warning"></i> <span x-text="dynamicSafetyWarnings.join(', ')"></span></span>
                                 </div>
                             </div>
                         </div>
@@ -751,9 +757,9 @@
                         <div class="card bg-base-100 shadow-xl">
                             <div class="card-body p-4">
                                 <div class="flex justify-between items-center mb-2">
-                                    <h3 class="font-bold" x-text="'💻 ' + $store.i18n.t('dynamic.codeEditor')"></h3>
+                                    <h3 class="font-bold flex items-center gap-1"><i data-lucide="code" class="lucide-sm"></i> <span x-text="$store.i18n.t('dynamic.codeEditor')"></span></h3>
                                     <button class="btn btn-ghost btn-xs" @click="applyCodeEdit()" :title="$store.i18n.t('dynamic.applyCode')">
-                                        ▶ <span x-text="$store.i18n.t('dynamic.applyCode')"></span>
+                                        <i data-lucide="play" class="lucide-sm"></i> <span x-text="$store.i18n.t('dynamic.applyCode')"></span>
                                     </button>
                                 </div>
                                 <textarea class="textarea textarea-bordered w-full font-mono text-xs leading-relaxed"
@@ -771,17 +777,17 @@
                         <div class="card-body py-3">
                             <div class="flex flex-wrap gap-2 justify-between items-center">
                                 <div class="flex gap-2">
-                                    <button class="btn btn-sm btn-outline" @click="exportDynamicDesign('html')">💾 <span x-text="$store.i18n.t('dynamic.exportHtml')"></span></button>
-                                    <button class="btn btn-sm btn-outline" @click="copyToClipboard(dynamicCode)">📋 <span x-text="$store.i18n.t('dynamic.copyCode')"></span></button>
+                                    <button class="btn btn-sm btn-outline" @click="exportDynamicDesign('html')"><i data-lucide="download" class="lucide-sm"></i> <span x-text="$store.i18n.t('dynamic.exportHtml')"></span></button>
+                                    <button class="btn btn-sm btn-outline" @click="copyToClipboard(dynamicCode)"><i data-lucide="clipboard" class="lucide-sm"></i> <span x-text="$store.i18n.t('dynamic.copyCode')"></span></button>
                                     <button class="btn btn-sm btn-outline" @click="exportDynamicAsGif()"
                                             :class="{'loading': gifExporting}"
                                             :disabled="gifExporting || videoExporting">
-                                        <span x-show="!gifExporting" x-text="'🎞️ ' + $store.i18n.t('dynamic.exportGif')"></span>
+                                        <span x-show="!gifExporting" class="flex items-center gap-1"><i data-lucide="film" class="lucide-sm"></i> <span x-text="$store.i18n.t('dynamic.exportGif')"></span></span>
                                     </button>
                                     <button class="btn btn-sm btn-outline" @click="exportDynamicAsVideo()"
                                             :class="{'loading': videoExporting}"
                                             :disabled="gifExporting || videoExporting">
-                                        <span x-show="!videoExporting" x-text="'🎥 ' + $store.i18n.t('dynamic.exportVideo')"></span>
+                                        <span x-show="!videoExporting" class="flex items-center gap-1"><i data-lucide="video" class="lucide-sm"></i> <span x-text="$store.i18n.t('dynamic.exportVideo')"></span></span>
                                     </button>
                                 </div>
                                 <div class="flex gap-2">
@@ -793,8 +799,9 @@
                                     <button class="btn btn-sm btn-primary" 
                                             @click="iterateDynamicDesign()"
                                             :class="{'loading': dynamicIterating}"
-                                            :disabled="dynamicIterating || !dynamicIterateInstruction.trim()">
-                                        🔄 <span x-text="$store.i18n.t('dynamic.iterate')"></span>
+                                            :disabled="dynamicIterating || !dynamicIterateInstruction.trim()"
+                                            :title="$store.i18n.t('dynamic.iterate')">
+                                        <i data-lucide="refresh-cw" class="lucide-sm"></i> <span x-text="$store.i18n.t('dynamic.iterate')"></span>
                                     </button>
                                 </div>
                             </div>
@@ -894,8 +901,8 @@
 
                     <div class="modal-action">
                         <button class="btn btn-outline" @click="selectedPreset = null" x-text="$store.i18n.t('actions.close')"></button>
-                        <button class="btn btn-primary" @click="applyPreset">✨ <span x-text="$store.i18n.t('presets.applyTemplate')"></span></button>
-                        <button class="btn btn-success" x-show="presetResult" @click="copyToClipboard(presetResult)">📋 <span x-text="$store.i18n.t('presets.copyResult')"></span></button>
+                        <button class="btn btn-primary" @click="applyPreset"><i data-lucide="sparkles" class="lucide-sm"></i> <span x-text="$store.i18n.t('presets.applyTemplate')"></span></button>
+                        <button class="btn btn-success" x-show="presetResult" @click="copyToClipboard(presetResult)"><i data-lucide="clipboard" class="lucide-sm"></i> <span x-text="$store.i18n.t('presets.copyResult')"></span></button>
                     </div>
                 </div>
             </template>
@@ -917,8 +924,8 @@
                     <!-- Header -->
                     <div class="flex items-center gap-4 mb-6">
                         <div class="avatar placeholder">
-                            <div class="bg-primary text-primary-content rounded-full w-16">
-                                <span class="text-3xl">🧠</span>
+                            <div class="bg-primary text-primary-content rounded-full w-16 flex items-center justify-center">
+                                <i data-lucide="brain" class="lucide-xl"></i>
                             </div>
                         </div>
                         <div>
@@ -935,7 +942,7 @@
 
                     <!-- Triggers -->
                     <div class="mb-4">
-                        <h4 class="font-medium mb-2" x-text="'🎯 ' + $store.i18n.t('skills.triggers')"></h4>
+                        <h4 class="font-medium mb-2 flex items-center gap-2"><i data-lucide="crosshair" class="lucide-md"></i> <span x-text="$store.i18n.t('skills.triggers')"></span></h4>
                         <div class="flex flex-wrap gap-2">
                             <template x-for="trigger in selectedSkill.meta?.triggers" :key="trigger">
                                 <span class="badge badge-primary" x-text="trigger"></span>
@@ -945,7 +952,7 @@
 
                     <!-- Tags -->
                     <div class="mb-4">
-                        <h4 class="font-medium mb-2" x-text="'🏷️ ' + $store.i18n.t('skills.tags')"></h4>
+                        <h4 class="font-medium mb-2 flex items-center gap-2"><i data-lucide="tag" class="lucide-md"></i> <span x-text="$store.i18n.t('skills.tags')"></span></h4>
                         <div class="flex flex-wrap gap-2">
                             <template x-for="tag in selectedSkill.meta?.tags" :key="tag">
                                 <span class="badge badge-secondary" x-text="tag"></span>
@@ -955,7 +962,7 @@
 
                     <!-- Instructions (Skill Content) -->
                     <div class="mb-4">
-                        <h4 class="font-medium mb-2" x-text="'📋 ' + $store.i18n.t('skills.instructions')"></h4>
+                        <h4 class="font-medium mb-2 flex items-center gap-2"><i data-lucide="file-text" class="lucide-md"></i> <span x-text="$store.i18n.t('skills.instructions')"></span></h4>
                         <div class="bg-base-200 rounded-lg p-4 max-h-80 overflow-y-auto">
                             <div class="prose prose-sm max-w-none" x-html="markdownToHtml(selectedSkill.instructions)"></div>
                         </div>
@@ -964,13 +971,13 @@
                     <!-- References & Assets -->
                     <div class="grid grid-cols-2 gap-4 mb-4">
                         <div>
-                            <h4 class="font-medium mb-2" x-text="'📚 ' + $store.i18n.t('skills.references')"></h4>
+                            <h4 class="font-medium mb-2 flex items-center gap-2"><i data-lucide="book-open" class="lucide-md"></i> <span x-text="$store.i18n.t('skills.references')"></span></h4>
                             <div class="bg-base-200 rounded-lg p-3 min-h-16">
                                 <template x-if="selectedSkill.references?.length > 0">
                                     <ul class="text-sm space-y-1">
                                         <template x-for="ref in selectedSkill.references" :key="ref">
                                             <li class="flex items-center gap-2">
-                                                <span>📄</span>
+                                                <i data-lucide="file" class="lucide-xs opacity-60"></i>
                                                 <span x-text="ref"></span>
                                             </li>
                                         </template>
@@ -980,13 +987,13 @@
                             </div>
                         </div>
                         <div>
-                            <h4 class="font-medium mb-2" x-text="'📦 ' + $store.i18n.t('skills.assets')"></h4>
+                            <h4 class="font-medium mb-2 flex items-center gap-2"><i data-lucide="package" class="lucide-md"></i> <span x-text="$store.i18n.t('skills.assets')"></span></h4>
                             <div class="bg-base-200 rounded-lg p-3 min-h-16">
                                 <template x-if="selectedSkill.assets?.length > 0">
                                     <ul class="text-sm space-y-1">
                                         <template x-for="asset in selectedSkill.assets" :key="asset">
                                             <li class="flex items-center gap-2">
-                                                <span>📁</span>
+                                                <i data-lucide="folder" class="lucide-xs opacity-60"></i>
                                                 <span x-text="asset"></span>
                                             </li>
                                         </template>
@@ -1016,7 +1023,7 @@
     <dialog class="modal" :class="{ 'modal-open': showCreateSkillModal }">
         <div class="modal-box max-w-3xl">
             <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" @click="showCreateSkillModal = false">✕</button>
-            <h3 class="font-bold text-lg mb-4" x-text="'➕ ' + $store.i18n.t('skills.createNew')"></h3>
+            <h3 class="font-bold text-lg mb-4 flex items-center gap-2"><i data-lucide="plus-circle" class="lucide-lg text-primary"></i> <span x-text="$store.i18n.t('skills.createNew')"></span></h3>
             
             <div class="space-y-4">
                 <div class="grid grid-cols-2 gap-4">
@@ -1079,8 +1086,8 @@ You are a...
 
             <div class="modal-action">
                 <button class="btn btn-outline" @click="showCreateSkillModal = false" x-text="$store.i18n.t('actions.cancel')"></button>
-                <button class="btn btn-primary" @click="createSkill" :disabled="!newSkill.id || !newSkill.name">
-                    ✨ <span x-text="$store.i18n.t('skills.createNew')"></span>
+                <button class="btn btn-primary gap-2" @click="createSkill" :disabled="!newSkill.id || !newSkill.name">
+                    <i data-lucide="sparkles" class="lucide-sm"></i> <span x-text="$store.i18n.t('skills.createNew')"></span>
                 </button>
             </div>
         </div>
@@ -1095,12 +1102,13 @@ You are a...
     <dialog class="modal" :class="{ 'modal-open': editingSkill }">
         <div class="modal-box max-w-3xl max-h-[90vh]">
             <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" @click="editingSkill = null">✕</button>
-            <h3 class="font-bold text-lg mb-4" x-text="'✏️ ' + $store.i18n.t('actions.edit') + ' Skill'"></h3>
+            <h3 class="font-bold text-lg mb-4 flex items-center gap-2"><i data-lucide="pencil" class="lucide-lg text-primary"></i> <span x-text="$store.i18n.t('actions.edit') + ' Skill'"></span></h3>
             
             <template x-if="editingSkill">
                 <div class="space-y-4">
                     <div class="alert alert-info text-sm">
-                        <span>📌 Skill ID: <strong x-text="editingSkill.id"></strong> (<span x-text="$store.i18n.t('settingsExtra.immutable')"></span>)</span>
+                        <i data-lucide="pin" class="lucide-sm"></i>
+                        <span>Skill ID: <strong x-text="editingSkill.id"></strong> (<span x-text="$store.i18n.t('settingsExtra.immutable')"></span>)</span>
                     </div>
 
                     <div class="form-control">
@@ -1133,8 +1141,8 @@ You are a...
 
             <div class="modal-action">
                 <button class="btn btn-outline" @click="editingSkill = null" x-text="$store.i18n.t('actions.cancel')"></button>
-                <button class="btn btn-primary" @click="saveSkillEdit" :disabled="!editingSkill?.name">
-                    💾 <span x-text="$store.i18n.t('actions.save')"></span>
+                <button class="btn btn-primary gap-2" @click="saveSkillEdit" :disabled="!editingSkill?.name">
+                    <i data-lucide="save" class="lucide-sm"></i> <span x-text="$store.i18n.t('actions.save')"></span>
                 </button>
             </div>
         </div>
@@ -1148,7 +1156,7 @@ You are a...
     <!-- ========================== -->
     <dialog class="modal" :class="{ 'modal-open': skillToDelete }">
         <div class="modal-box">
-            <h3 class="font-bold text-lg text-error" x-text="'⚠️ ' + $store.i18n.t('skills.deleteConfirm')"></h3>
+            <h3 class="font-bold text-lg text-error flex items-center gap-2"><i data-lucide="alert-triangle" class="lucide-lg"></i> <span x-text="$store.i18n.t('skills.deleteConfirm')"></span></h3>
             <p class="py-4">
                 <span x-text="$store.i18n.t('skills.deleteQuestion').replace('{name}', skillToDelete?.name || '')"></span>
                 <br><br>
@@ -1156,7 +1164,7 @@ You are a...
             </p>
             <div class="modal-action">
                 <button class="btn btn-outline" @click="skillToDelete = null" x-text="$store.i18n.t('actions.cancel')"></button>
-                <button class="btn btn-error" @click="deleteSkill(skillToDelete?.id)">🗑️ <span x-text="$store.i18n.t('actions.confirm')"></span></button>
+                <button class="btn btn-error gap-1" @click="deleteSkill(skillToDelete?.id)"><i data-lucide="trash-2" class="lucide-sm"></i> <span x-text="$store.i18n.t('actions.confirm')"></span></button>
             </div>
         </div>
         <form method="dialog" class="modal-backdrop">
@@ -1170,7 +1178,7 @@ You are a...
     <div x-show="activeTab === 'aiManage'" x-transition:enter="transition ease-out duration-300" @hide="stopModelStatusPolling()" class="zen-tab-full">
         
         <div class="text-center mb-8">
-            <h1 class="text-4xl font-bold text-primary mb-2" x-text="'🤖 ' + $store.i18n.t('ai.title')"></h1>
+            <h1 class="text-4xl font-bold text-primary mb-2 flex items-center justify-center gap-2"><i data-lucide="cpu" class="lucide-xl"></i> <span x-text="$store.i18n.t('ai.title')"></span></h1>
             <p class="text-lg opacity-75" x-text="$store.i18n.t('ai.subtitle')"></p>
         </div>
 
@@ -1183,25 +1191,25 @@ You are a...
                 <div class="card bg-base-100 shadow-xl">
                     <div class="card-body">
                         <div class="flex justify-between items-center mb-4">
-                            <h3 class="card-title text-lg" x-text="'📦 ' + $store.i18n.t('ai.localModels')"></h3>
+                            <h3 class="card-title text-lg flex items-center gap-1"><i data-lucide="package" class="lucide-sm"></i> <span x-text="$store.i18n.t('ai.localModels')"></span></h3>
                             <div class="flex gap-1">
                                 <button class="btn btn-ghost btn-sm" @click="scanModels()" :disabled="modelScanLoading" :title="$store.i18n.t('ai.scan')">
-                                    <span x-show="!modelScanLoading">🔍 <span x-text="$store.i18n.t('ai.scan')"></span></span>
+                                    <span x-show="!modelScanLoading"><i data-lucide="search" class="lucide-sm"></i> <span x-text="$store.i18n.t('ai.scan')"></span></span>
                                     <span x-show="modelScanLoading" class="loading loading-spinner loading-xs"></span>
                                 </button>
-                                <button class="btn btn-ghost btn-sm" @click="loadLocalModelStatus()" :title="$store.i18n.t('actions.refresh')">🔄</button>
+                                <button class="btn btn-ghost btn-sm" @click="loadLocalModelStatus()" :title="$store.i18n.t('actions.refresh')"><i data-lucide="refresh-cw" class="lucide-sm"></i></button>
                             </div>
                         </div>
 
                         <!-- 模型目录提示 -->
                         <div class="alert alert-info text-xs mb-3 py-2">
-                            <span x-text="'💡 ' + $store.i18n.t('ai.modelDir') + ': models/. ' + $store.i18n.t('ai.modelDirTip')"></span>
+                            <span class="flex items-center gap-1"><i data-lucide="lightbulb" class="lucide-xs"></i> <span x-text="$store.i18n.t('ai.modelDir') + ': models/. ' + $store.i18n.t('ai.modelDirTip')"></span></span>
                         </div>
 
                         <!-- 手动导入 -->
                         <div class="collapse collapse-arrow bg-base-200 mb-3">
                             <input type="checkbox" />
-                            <div class="collapse-title text-sm font-medium py-2 min-h-0" x-text="'📂 ' + $store.i18n.t('ai.importModel')"></div>
+                            <div class="collapse-title text-sm font-medium py-2 min-h-0 flex items-center gap-1"><i data-lucide="folder-open" class="lucide-sm"></i> <span x-text="$store.i18n.t('ai.importModel')"></span></div>
                             <div class="collapse-content">
                                 <div class="form-control mt-2">
                                     <label class="label py-1"><span class="label-text text-xs" x-text="$store.i18n.t('ai.importPathHint')"></span></label>
@@ -1210,9 +1218,9 @@ You are a...
                                            :placeholder="$store.i18n.t('ai.importPathPlaceholder')" />
                                 </div>
                                 <button class="btn btn-sm btn-primary mt-2" 
-                                        @click="importModel('generation')"
+                                        @click="importModel('qwen3-0.6b')"
                                         :disabled="!modelImportPath?.trim()">
-                                    📥 <span x-text="$store.i18n.t('ai.importAsQwen')"></span>
+                                    <i data-lucide="download" class="lucide-sm"></i> <span x-text="$store.i18n.t('ai.importAsQwen')"></span>
                                 </button>
                             </div>
                         </div>
@@ -1221,40 +1229,90 @@ You are a...
                         <div class="border rounded-lg p-4 mb-3">
                             <div class="flex justify-between items-center mb-2">
                                 <div>
-                                    <span class="font-bold" x-text="'🧠 ' + $store.i18n.t('ai.qwenModel')"></span>
+                                    <span class="font-bold flex items-center gap-1"><i data-lucide="brain" class="lucide-sm"></i> <span x-text="$store.i18n.t('ai.qwenModel')"></span></span>
                                     <span class="text-xs opacity-60 ml-2" x-text="$store.i18n.t('ai.qwenDesc')"></span>
                                 </div>
-                                <span class="badge" :class="getModelStatusBadge(localModels?.models?.generation?.status)?.class"
-                                      x-text="getModelStatusBadge(localModels?.models?.generation?.status)?.label"></span>
+                                <span class="badge" :class="getModelStatusBadge(localModels?.models?.['qwen3-0.6b']?.status)?.class"
+                                      x-text="getModelStatusBadge(localModels?.models?.['qwen3-0.6b']?.status)?.label"></span>
                             </div>
                             
                             <!-- 下载进度条 -->
-                            <div x-show="modelDownloading === 'generation'" class="mb-2">
+                            <div x-show="modelDownloading === 'qwen3-0.6b'" class="mb-2">
                                 <progress class="progress progress-primary w-full" :value="modelDownloadProgress" max="100"></progress>
                                 <span class="text-xs" x-text="modelDownloadProgress + '%'"></span>
                             </div>
 
                             <div class="flex gap-2 flex-wrap">
                                 <button class="btn btn-xs btn-primary" 
-                                        x-show="localModels?.models?.generation?.status === 'not_downloaded'"
-                                        @click="downloadModel('generation')"
-                                        :disabled="modelDownloading">
-                                    ⬇️ <span x-text="$store.i18n.t('actions.download')"></span>
+                                        x-show="localModels?.models?.['qwen3-0.6b']?.status === 'not_downloaded'"
+                                        @click="downloadModel('qwen3-0.6b')"
+                                        :disabled="modelDownloading"
+                                        :title="$store.i18n.t('actions.download')">
+                                    <i data-lucide="download" class="lucide-xs"></i> <span x-text="$store.i18n.t('actions.download')"></span>
                                 </button>
                                 <button class="btn btn-xs btn-success" 
-                                        x-show="localModels?.models?.generation?.status === 'downloaded'"
-                                        @click="loadModelToMemory('generation')">
-                                    ▶️ <span x-text="$store.i18n.t('actions.load')"></span>
+                                        x-show="localModels?.models?.['qwen3-0.6b']?.status === 'downloaded'"
+                                        @click="loadModelToMemory('qwen3-0.6b')"
+                                        :title="$store.i18n.t('actions.load')">
+                                    <i data-lucide="play" class="lucide-xs"></i> <span x-text="$store.i18n.t('actions.load')"></span>
                                 </button>
                                 <button class="btn btn-xs btn-warning" 
-                                        x-show="localModels?.models?.generation?.status === 'ready'"
-                                        @click="unloadModel('generation')">
-                                    ⏸️ <span x-text="$store.i18n.t('actions.unload')"></span>
+                                        x-show="localModels?.models?.['qwen3-0.6b']?.status === 'ready'"
+                                        @click="unloadModel('qwen3-0.6b')"
+                                        :title="$store.i18n.t('actions.unload')">
+                                    <i data-lucide="pause" class="lucide-xs"></i> <span x-text="$store.i18n.t('actions.unload')"></span>
                                 </button>
                                 <button class="btn btn-xs btn-error btn-outline" 
-                                        x-show="['downloaded','ready'].includes(localModels?.models?.generation?.status)"
-                                        @click="deleteModel('generation')">
-                                    🗑️ <span x-text="$store.i18n.t('actions.delete')"></span>
+                                        x-show="['downloaded','ready'].includes(localModels?.models?.['qwen3-0.6b']?.status)"
+                                        @click="deleteModel('qwen3-0.6b')"
+                                        :title="$store.i18n.t('actions.delete')">
+                                    <i data-lucide="trash-2" class="lucide-xs"></i> <span x-text="$store.i18n.t('actions.delete')"></span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 生成模型 (Qwen3.5-0.8B) — 新一代 -->
+                        <div class="border rounded-lg p-4 mb-3 border-primary/30">
+                            <div class="flex justify-between items-center mb-2">
+                                <div>
+                                    <span class="font-bold flex items-center gap-1"><i data-lucide="sparkles" class="lucide-sm text-primary"></i> <span x-text="$store.i18n.t('ai.qwen35Model')"></span> <span class="badge badge-primary badge-xs">NEW</span></span>
+                                    <span class="text-xs opacity-60 ml-2" x-text="$store.i18n.t('ai.qwen35Desc')"></span>
+                                </div>
+                                <span class="badge" :class="getModelStatusBadge(localModels?.models?.['qwen3.5-0.8b']?.status)?.class"
+                                      x-text="getModelStatusBadge(localModels?.models?.['qwen3.5-0.8b']?.status)?.label"></span>
+                            </div>
+                            
+                            <!-- 下载进度条 -->
+                            <div x-show="modelDownloading === 'qwen3.5-0.8b'" class="mb-2">
+                                <progress class="progress progress-primary w-full" :value="modelDownloadProgress" max="100"></progress>
+                                <span class="text-xs" x-text="modelDownloadProgress + '%'"></span>
+                            </div>
+
+                            <div class="flex gap-2 flex-wrap">
+                                <button class="btn btn-xs btn-primary" 
+                                        x-show="localModels?.models?.['qwen3.5-0.8b']?.status === 'not_downloaded'"
+                                        @click="downloadModel('qwen3.5-0.8b')"
+                                        :disabled="modelDownloading"
+                                        :title="$store.i18n.t('actions.download')">
+                                    <i data-lucide="download" class="lucide-xs"></i> <span x-text="$store.i18n.t('actions.download')"></span>
+                                </button>
+                                <button class="btn btn-xs btn-success" 
+                                        x-show="localModels?.models?.['qwen3.5-0.8b']?.status === 'downloaded'"
+                                        @click="loadModelToMemory('qwen3.5-0.8b')"
+                                        :title="$store.i18n.t('actions.load')">
+                                    <i data-lucide="play" class="lucide-xs"></i> <span x-text="$store.i18n.t('actions.load')"></span>
+                                </button>
+                                <button class="btn btn-xs btn-warning" 
+                                        x-show="localModels?.models?.['qwen3.5-0.8b']?.status === 'ready'"
+                                        @click="unloadModel('qwen3.5-0.8b')"
+                                        :title="$store.i18n.t('actions.unload')">
+                                    <i data-lucide="pause" class="lucide-xs"></i> <span x-text="$store.i18n.t('actions.unload')"></span>
+                                </button>
+                                <button class="btn btn-xs btn-error btn-outline" 
+                                        x-show="['downloaded','ready'].includes(localModels?.models?.['qwen3.5-0.8b']?.status)"
+                                        @click="deleteModel('qwen3.5-0.8b')"
+                                        :title="$store.i18n.t('actions.delete')">
+                                    <i data-lucide="trash-2" class="lucide-xs"></i> <span x-text="$store.i18n.t('actions.delete')"></span>
                                 </button>
                             </div>
                         </div>
@@ -1263,40 +1321,44 @@ You are a...
                         <div class="border rounded-lg p-4">
                             <div class="flex justify-between items-center mb-2">
                                 <div>
-                                    <span class="font-bold" x-text="'🛡️ ' + $store.i18n.t('ai.toxicModel')"></span>
+                                    <span class="font-bold flex items-center gap-1"><i data-lucide="shield" class="lucide-sm"></i> <span x-text="$store.i18n.t('ai.toxicModel')"></span></span>
                                     <span class="text-xs opacity-60 ml-2" x-text="$store.i18n.t('ai.toxicDesc')"></span>
                                 </div>
-                                <span class="badge" :class="getModelStatusBadge(localModels?.models?.classification?.status)?.class"
-                                      x-text="getModelStatusBadge(localModels?.models?.classification?.status)?.label"></span>
+                                <span class="badge" :class="getModelStatusBadge(localModels?.models?.['tiny-toxic-detector']?.status)?.class"
+                                      x-text="getModelStatusBadge(localModels?.models?.['tiny-toxic-detector']?.status)?.label"></span>
                             </div>
                             
                             <!-- 下载进度条 -->
-                            <div x-show="modelDownloading === 'classification'" class="mb-2">
+                            <div x-show="modelDownloading === 'tiny-toxic-detector'" class="mb-2">
                                 <progress class="progress progress-secondary w-full" :value="modelDownloadProgress" max="100"></progress>
                                 <span class="text-xs" x-text="modelDownloadProgress + '%'"></span>
                             </div>
 
                             <div class="flex gap-2 flex-wrap">
                                 <button class="btn btn-xs btn-primary" 
-                                        x-show="localModels?.models?.classification?.status === 'not_downloaded'"
-                                        @click="downloadModel('classification')"
-                                        :disabled="modelDownloading">
-                                    ⬇️ <span x-text="$store.i18n.t('actions.download')"></span>
+                                        x-show="localModels?.models?.['tiny-toxic-detector']?.status === 'not_downloaded'"
+                                        @click="downloadModel('tiny-toxic-detector')"
+                                        :disabled="modelDownloading"
+                                        :title="$store.i18n.t('actions.download')">
+                                    <i data-lucide="download" class="lucide-xs"></i> <span x-text="$store.i18n.t('actions.download')"></span>
                                 </button>
                                 <button class="btn btn-xs btn-success" 
-                                        x-show="localModels?.models?.classification?.status === 'downloaded'"
-                                        @click="loadModelToMemory('classification')">
-                                    ▶️ <span x-text="$store.i18n.t('actions.load')"></span>
+                                        x-show="localModels?.models?.['tiny-toxic-detector']?.status === 'downloaded'"
+                                        @click="loadModelToMemory('tiny-toxic-detector')"
+                                        :title="$store.i18n.t('actions.load')">
+                                    <i data-lucide="play" class="lucide-xs"></i> <span x-text="$store.i18n.t('actions.load')"></span>
                                 </button>
                                 <button class="btn btn-xs btn-warning" 
-                                        x-show="localModels?.models?.classification?.status === 'ready'"
-                                        @click="unloadModel('classification')">
-                                    ⏸️ <span x-text="$store.i18n.t('actions.unload')"></span>
+                                        x-show="localModels?.models?.['tiny-toxic-detector']?.status === 'ready'"
+                                        @click="unloadModel('tiny-toxic-detector')"
+                                        :title="$store.i18n.t('actions.unload')">
+                                    <i data-lucide="pause" class="lucide-xs"></i> <span x-text="$store.i18n.t('actions.unload')"></span>
                                 </button>
                                 <button class="btn btn-xs btn-error btn-outline" 
-                                        x-show="['downloaded','ready'].includes(localModels?.models?.classification?.status)"
-                                        @click="deleteModel('classification')">
-                                    🗑️ <span x-text="$store.i18n.t('actions.delete')"></span>
+                                        x-show="['downloaded','ready'].includes(localModels?.models?.['tiny-toxic-detector']?.status)"
+                                        @click="deleteModel('tiny-toxic-detector')"
+                                        :title="$store.i18n.t('actions.delete')">
+                                    <i data-lucide="trash-2" class="lucide-xs"></i> <span x-text="$store.i18n.t('actions.delete')"></span>
                                 </button>
                             </div>
                         </div>
@@ -1306,7 +1368,7 @@ You are a...
                 <!-- 内存监控 -->
                 <div class="card bg-base-100 shadow-xl">
                     <div class="card-body">
-                        <h3 class="card-title text-lg mb-3" x-text="'💾 ' + $store.i18n.t('ai.memory')"></h3>
+                        <h3 class="card-title text-lg mb-3 flex items-center gap-1"><i data-lucide="hard-drive" class="lucide-sm"></i> <span x-text="$store.i18n.t('ai.memory')"></span></h3>
                         <div class="grid grid-cols-2 gap-4">
                             <div class="stat bg-base-200 rounded-lg p-3">
                                 <div class="stat-title text-xs" x-text="$store.i18n.t('ai.rssMemory')"></div>
@@ -1331,7 +1393,7 @@ You are a...
                 <!-- 推理测试 -->
                 <div class="card bg-base-100 shadow-xl">
                     <div class="card-body">
-                        <h3 class="card-title text-lg mb-3" x-text="'🧪 ' + $store.i18n.t('ai.inferTest')"></h3>
+                        <h3 class="card-title text-lg mb-3 flex items-center gap-1"><i data-lucide="flask-conical" class="lucide-sm"></i> <span x-text="$store.i18n.t('ai.inferTest')"></span></h3>
                         <div class="form-control mb-3">
                             <textarea class="textarea textarea-bordered w-full" rows="2"
                                       x-model="modelTestInput"
@@ -1340,37 +1402,40 @@ You are a...
                         <div class="flex gap-2 mb-3">
                             <button class="btn btn-sm btn-primary flex-1" 
                                     @click="testModelGenerate()" 
-                                    :disabled="modelTestLoading || localModels?.models?.generation?.status !== 'ready'">
-                                <span x-show="!modelTestLoading" x-text="'🧠 ' + $store.i18n.t('ai.generateTest')"></span>
+                                    :disabled="modelTestLoading || !(localModels?.models?.['qwen3-0.6b']?.status === 'ready' || localModels?.models?.['qwen3.5-0.8b']?.status === 'ready')">
+                                <span x-show="!modelTestLoading" class="flex items-center gap-1"><i data-lucide="brain" class="lucide-sm"></i> <span x-text="$store.i18n.t('ai.generateTest')"></span></span>
                                 <span x-show="modelTestLoading" class="loading loading-spinner loading-xs"></span>
                             </button>
                             <button class="btn btn-sm btn-secondary flex-1" 
                                     @click="testModelClassify()" 
-                                    :disabled="modelTestLoading || localModels?.models?.classification?.status !== 'ready'">
-                                <span x-show="!modelTestLoading" x-text="'🛡️ ' + $store.i18n.t('ai.classifyTest')"></span>
+                                    :disabled="modelTestLoading || localModels?.models?.['tiny-toxic-detector']?.status !== 'ready'">
+                                <span x-show="!modelTestLoading" class="flex items-center gap-1"><i data-lucide="shield" class="lucide-sm"></i> <span x-text="$store.i18n.t('ai.classifyTest')"></span></span>
                                 <span x-show="modelTestLoading" class="loading loading-spinner loading-xs"></span>
                             </button>
                         </div>
                         <!-- 测试结果 -->
                         <div x-show="modelTestResult" class="bg-base-200 rounded-lg p-3">
                             <template x-if="modelTestResult?.type === 'error'">
-                                <div class="text-error text-sm" x-text="'❌ ' + modelTestResult?.output"></div>
+                                <div class="text-error text-sm flex items-center gap-1"><i data-lucide="x-circle" class="lucide-sm"></i> <span x-text="modelTestResult?.output"></span></div>
                             </template>
                             <template x-if="modelTestResult?.type === 'generate'">
                                 <div>
-                                    <div class="text-xs opacity-60 mb-1">
-                                        ⏱️ <span x-text="modelTestResult?.time || '-'"></span>
-                                        · 🔤 <span x-text="modelTestResult?.tokens || '-'"></span>
+                                    <div class="text-xs opacity-60 mb-1 flex items-center gap-1">
+                                        <i data-lucide="timer" class="lucide-xs"></i> <span x-text="modelTestResult?.time || '-'"></span>
+                                        · <i data-lucide="type" class="lucide-xs"></i> <span x-text="modelTestResult?.tokens || '-'"></span>
                                     </div>
                                     <p class="text-sm whitespace-pre-wrap" x-text="modelTestResult?.output"></p>
                                 </div>
                             </template>
                             <template x-if="modelTestResult?.type === 'classify'">
                                 <div>
-                                    <div class="text-xs opacity-60 mb-1">⏱️ <span x-text="modelTestResult?.time || '-'"></span></div>
+                                    <div class="text-xs opacity-60 mb-1 flex items-center gap-1"><i data-lucide="timer" class="lucide-xs"></i> <span x-text="modelTestResult?.time || '-'"></span></div>
                                     <div class="flex items-center gap-2 mb-2">
-                                        <span class="badge" :class="modelTestResult?.output?.isToxic ? 'badge-error' : 'badge-success'"
-                                              x-text="modelTestResult?.output?.isToxic ? ('⚠️ ' + $store.i18n.t('ai.unsafe')) : ('✅ ' + $store.i18n.t('ai.safe'))"></span>
+                                        <span class="badge flex items-center gap-1" :class="modelTestResult?.output?.isToxic ? 'badge-error' : 'badge-success'">
+                                            <i data-lucide="alert-triangle" class="lucide-xs" x-show="modelTestResult?.output?.isToxic"></i>
+                                            <i data-lucide="check-circle" class="lucide-xs" x-show="!modelTestResult?.output?.isToxic"></i>
+                                            <span x-text="modelTestResult?.output?.isToxic ? $store.i18n.t('ai.unsafe') : $store.i18n.t('ai.safe')"></span>
+                                        </span>
                                         <span class="text-sm" x-text="$store.i18n.t('ai.confidence') + ': ' + ((modelTestResult?.output?.confidence || 0) * 100).toFixed(1) + '%'"></span>
                                     </div>
                                     <div class="text-xs opacity-60">
@@ -1390,7 +1455,7 @@ You are a...
                 <div class="card bg-base-100 shadow-xl">
                     <div class="card-body">
                         <div class="flex justify-between items-center mb-4">
-                            <h3 class="card-title text-lg">🛡️ <span x-text="$store.i18n.t('ai.safety')"></span></h3>
+                            <h3 class="card-title text-lg flex items-center gap-1"><i data-lucide="shield" class="lucide-sm"></i> <span x-text="$store.i18n.t('ai.safety')"></span></h3>
                             <input type="checkbox" class="toggle toggle-success" x-model="safetyEnabled" @change="toggleSafety()" />
                         </div>
                         
@@ -1401,7 +1466,7 @@ You are a...
 
                         <!-- 安全统计 -->
                         <div x-show="safetyStats" class="mb-4">
-                            <div class="divider text-xs">📊 <span x-text="$store.i18n.t('ai.safetyStats')"></span></div>
+                            <div class="divider text-xs"><i data-lucide="bar-chart" class="lucide-xs inline"></i> <span x-text="$store.i18n.t('ai.safetyStats')"></span></div>
                             <div class="grid grid-cols-3 gap-3">
                                 <div class="stat bg-base-200 rounded-lg p-2 text-center">
                                     <div class="stat-title text-xs" x-text="$store.i18n.t('ai.totalChecks')"></div>
@@ -1422,7 +1487,7 @@ You are a...
                         </div>
 
                         <!-- 安全手动测试 -->
-                        <div class="divider text-xs">🧪 <span x-text="$store.i18n.t('ai.manualTest')"></span></div>
+                        <div class="divider text-xs"><i data-lucide="flask-conical" class="lucide-xs inline"></i> <span x-text="$store.i18n.t('ai.manualTest')"></span></div>
                         <div class="form-control mb-3">
                             <textarea class="textarea textarea-bordered w-full" rows="2"
                                       x-model="safetyTestInput"
@@ -1431,20 +1496,23 @@ You are a...
                         <button class="btn btn-sm btn-outline btn-block mb-3" 
                                 @click="testSafetyCheck()" 
                                 :disabled="safetyTestLoading">
-                            <span x-show="!safetyTestLoading">🔍 <span x-text="$store.i18n.t('ai.testSafety')"></span></span>
+                            <span x-show="!safetyTestLoading" class="flex items-center gap-1"><i data-lucide="search" class="lucide-sm"></i> <span x-text="$store.i18n.t('ai.testSafety')"></span></span>
                             <span x-show="safetyTestLoading" class="loading loading-spinner loading-xs"></span>
                         </button>
                         
                         <!-- 安全测试结果 -->
                         <div x-show="safetyTestResult" class="bg-base-200 rounded-lg p-3">
                             <template x-if="safetyTestResult?.error">
-                                <div class="text-error text-sm" x-text="'❌ ' + safetyTestResult.error"></div>
+                                <div class="text-error text-sm flex items-center gap-1"><i data-lucide="x-circle" class="lucide-sm"></i> <span x-text="safetyTestResult.error"></span></div>
                             </template>
                             <template x-if="!safetyTestResult?.error && safetyTestResult">
                                 <div>
                                     <div class="flex items-center gap-2 mb-2">
-                                        <span class="badge" :class="safetyTestResult.safe ? 'badge-success' : 'badge-error'"
-                                              x-text="safetyTestResult.safe ? ('✅ ' + $store.i18n.t('ai.safe')) : ('❌ ' + $store.i18n.t('ai.unsafe'))"></span>
+                                        <span class="badge flex items-center gap-1" :class="safetyTestResult.safe ? 'badge-success' : 'badge-error'">
+                                            <i data-lucide="check-circle" class="lucide-xs" x-show="safetyTestResult.safe"></i>
+                                            <i data-lucide="x-circle" class="lucide-xs" x-show="!safetyTestResult.safe"></i>
+                                            <span x-text="safetyTestResult.safe ? $store.i18n.t('ai.safe') : $store.i18n.t('ai.unsafe')"></span>
+                                        </span>
                                         <span class="badge badge-outline badge-sm" x-text="$store.i18n.t('ai.riskLevel') + ': ' + (safetyTestResult.riskLevel || 'none')"></span>
                                     </div>
                                     <template x-if="safetyTestResult.flags?.length > 0">
@@ -1467,10 +1535,14 @@ You are a...
                 <!-- 离线模式 -->
                 <div class="card bg-base-100 shadow-xl">
                     <div class="card-body">
-                        <h3 class="card-title text-lg mb-4">🔌 <span x-text="$store.i18n.t('ai.offline')"></span></h3>
+                        <h3 class="card-title text-lg mb-4 flex items-center gap-1"><i data-lucide="plug" class="lucide-sm"></i> <span x-text="$store.i18n.t('ai.offline')"></span></h3>
                         
                         <div class="alert mb-4" :class="isLocalModelReady ? 'alert-success' : 'alert-warning'">
-                            <span x-text="isLocalModelReady ? ('🟢 ' + $store.i18n.t('ai.offlineReady')) : ('⚪ ' + $store.i18n.t('ai.offlineNotReady'))"></span>
+                            <span class="flex items-center gap-1">
+                                <i data-lucide="circle-dot" class="lucide-sm" x-show="isLocalModelReady"></i>
+                                <i data-lucide="circle" class="lucide-sm" x-show="!isLocalModelReady"></i>
+                                <span x-text="isLocalModelReady ? $store.i18n.t('ai.offlineReady') : $store.i18n.t('ai.offlineNotReady')"></span>
+                            </span>
                         </div>
 
                         <div class="form-control mb-4">
@@ -1504,7 +1576,7 @@ You are a...
                 <!-- 系统信息 -->
                 <div class="card bg-base-100 shadow-xl">
                     <div class="card-body">
-                        <h3 class="card-title text-lg mb-3">📋 <span x-text="$store.i18n.t('ai.systemInfo')"></span></h3>
+                        <h3 class="card-title text-lg mb-3 flex items-center gap-1"><i data-lucide="clipboard-list" class="lucide-sm"></i> <span x-text="$store.i18n.t('ai.systemInfo')"></span></h3>
                         <div class="text-sm space-y-2">
                             <div class="flex justify-between">
                                 <span class="opacity-60" x-text="$store.i18n.t('ai.sysVersion')"></span>
@@ -1519,12 +1591,16 @@ You are a...
                                 <span class="font-mono" x-text="(localModels?.runtime?.platform || '-') + ' / ' + (localModels?.runtime?.arch || '-')"></span>
                             </div>
                             <div class="flex justify-between">
-                                <span class="opacity-60" x-text="$store.i18n.t('ai.sysGenModel')"></span>
-                                <span class="font-mono" x-text="localModels?.models?.generation?.status || '-'"></span>
+                                <span class="opacity-60">Qwen3-0.6B</span>
+                                <span class="font-mono" x-text="localModels?.models?.['qwen3-0.6b']?.status || '-'"></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="opacity-60">Qwen3.5-0.8B</span>
+                                <span class="font-mono" x-text="localModels?.models?.['qwen3.5-0.8b']?.status || '-'"></span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="opacity-60" x-text="$store.i18n.t('ai.sysClassModel')"></span>
-                                <span class="font-mono" x-text="localModels?.models?.classification?.status || '-'"></span>
+                                <span class="font-mono" x-text="localModels?.models?.['tiny-toxic-detector']?.status || '-'"></span>
                             </div>
                         </div>
                     </div>
@@ -1562,7 +1638,7 @@ You are a...
     <dialog class="modal" :class="{ 'modal-open': showSettings }">
         <div class="modal-box max-w-lg">
             <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" @click="showSettings = false">✕</button>
-            <h3 class="font-bold text-lg mb-4">⚙️ <span x-text="$store.i18n.t('settings.title')"></span></h3>
+            <h3 class="font-bold text-lg mb-4 flex items-center gap-1"><i data-lucide="settings" class="lucide-sm"></i> <span x-text="$store.i18n.t('settings.title')"></span></h3>
             
             <!-- 服务商选择 -->
             <div class="form-control mb-4">
@@ -1618,7 +1694,7 @@ You are a...
                     <label class="label">
                         <span class="label-text" x-text="$store.i18n.t('settings.selectModel')"></span>
                         <button type="button" class="btn btn-xs btn-ghost gap-1" @click="refreshModels" :disabled="modelsLoading">
-                            <span x-show="!modelsLoading">🔄</span>
+                            <span x-show="!modelsLoading"><i data-lucide="refresh-cw" class="lucide-sm"></i></span>
                             <span x-show="modelsLoading" class="loading loading-spinner loading-xs"></span>
                             <span x-text="modelsLoading ? $store.i18n.t('settings.loading') : $store.i18n.t('settings.refreshList')"></span>
                         </button>
@@ -1635,20 +1711,20 @@ You are a...
                                x-show="availableModels.length === 0"
                                :placeholder="$store.i18n.t('settings.modelManual')" />
                     </div>
-                    <p class="text-xs text-base-content/50 mt-1" x-show="availableModels.length === 0">
-                        💡 <span x-text="$store.i18n.t('settings.modelTip')"></span>
+                    <p class="text-xs text-base-content/50 mt-1 flex items-center gap-1" x-show="availableModels.length === 0">
+                        <i data-lucide="lightbulb" class="lucide-xs"></i> <span x-text="$store.i18n.t('settings.modelTip')"></span>
                     </p>
                 </div>
 
                 <!-- 🔥 超轻量模型优化设置 -->
-                <div class="divider text-xs opacity-60">⚡ <span x-text="$store.i18n.t('settings.optimization')"></span></div>
+                <div class="divider text-xs opacity-60"><i data-lucide="zap" class="lucide-xs inline"></i> <span x-text="$store.i18n.t('settings.optimization')"></span></div>
 
                 <!-- 🔌 Phase 16: 离线模式快捷开关 -->
                 <div class="form-control">
                     <label class="label cursor-pointer justify-start gap-3">
                         <input type="checkbox" class="toggle toggle-success toggle-sm" x-model="offlinePreferLocal" @change="saveOfflineSettings()" />
                         <div>
-                            <span class="label-text font-medium">🔌 <span x-text="$store.i18n.t('settings.preferLocalToggle')"></span></span>
+                            <span class="label-text font-medium flex items-center gap-1"><i data-lucide="plug" class="lucide-xs"></i> <span x-text="$store.i18n.t('settings.preferLocalToggle')"></span></span>
                             <p class="text-xs text-base-content/50" x-text="$store.i18n.t('settings.preferLocalDesc')"></p>
                         </div>
                     </label>
@@ -1673,8 +1749,8 @@ You are a...
                         }" x-text="settings.compressionLevel == 1 ? '~4K tokens' : '~1.5K tokens'"></span>
                     </label>
                     <select class="select select-bordered select-sm w-full" x-model.number="settings.compressionLevel">
-                        <option value="1" x-text="'📄 ' + $store.i18n.t('settings.compressionSimple')"></option>
-                        <option value="2" x-text="'⚡ ' + $store.i18n.t('settings.compressionUltra')"></option>
+                        <option value="1" x-text="'◇ ' + $store.i18n.t('settings.compressionSimple')"></option>
+                        <option value="2" x-text="'◆ ' + $store.i18n.t('settings.compressionUltra')"></option>
                     </select>
                     <div class="alert alert-warning mt-2 py-2" x-show="settings.compressionLevel == 2">
                         <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
@@ -1692,7 +1768,7 @@ You are a...
 
             <div class="modal-action">
                 <button class="btn btn-outline" @click="showSettings = false" x-text="$store.i18n.t('actions.cancel')"></button>
-                <button class="btn btn-primary" @click="saveSettings">💾 <span x-text="$store.i18n.t('settings.saveSettings')"></span></button>
+                <button class="btn btn-primary" @click="saveSettings"><i data-lucide="save" class="lucide-sm"></i> <span x-text="$store.i18n.t('settings.saveSettings')"></span></button>
             </div>
         </div>
         <form method="dialog" class="modal-backdrop">

@@ -1,11 +1,14 @@
-# PromptAtelier 项目进| Phase 15: 提示词增强(离线模式) | ✅ 后端完成 | 2026-02-27 |
+# PromptAtelier 项目进度
+
+| Phase 15: 提示词增强(离线模式) | ✅ 后端完成 | 2026-02-27 |
 | Phase 16: 前端集成 | ✅ 完成 | 2026-02-27 |
 | Phase 17: 测试与优化 | ✅ 完成 | 2026-02-27 |
 | 项目清理 | ✅ 完成 | 2026-01-31 |
 | **Phase A: 基础框架与 i18n 基建** | ✅ 完成 | 2026-03-05 |
 | **Phase B2: 设计助手三栏布局** | ✅ 完成 | 2026-03-06 |
+| **Phase C: Zen 全量优化 + Qwen3.5** | ✅ 完成 | 2026-03-07 |
 
-**测试统计：19 个测试套件，519 项测试全部通过 ✅** 最后更新: 2026-03-06 | v6.0.0-alpha (Phase B2)
+**测试统计：20 个测试套件，545 项测试全部通过 ✅** 最后更新: 2026-03-07 | v6.0.0-alpha (Phase C)
 
 ## 📊 总体进度
 
@@ -26,8 +29,52 @@
 | 项目清理 | ✅ 完成 | 2026-01-31 |
 | **Phase A: 基础框架与 i18n 基建** | ✅ 完成 | 2026-03-05 |
 | **Phase B2: 设计助手三栏布局** | ✅ 完成 | 2026-03-06 |
+| **Phase C: Zen 全量优化 + Qwen3.5** | ✅ 完成 | 2026-03-07 |
 
-**测试统计：19 个测试套件，519 项测试全部通过 ✅**
+**测试统计：20 个测试套件，545 项测试全部通过 ✅**
+
+---
+
+## 🚀 Phase C: Zen 全量优化 + Qwen3.5 集成 (2026-03-07) — v6.0.0-alpha
+
+### C.1 P0 修复
+- ✅ 创建 `promptBuilder.test.js` — 24 个单元测试覆盖 PromptBuilder 核心功能
+- ✅ `package.json` 版本更新至 `6.0.0-alpha`
+
+### C.2 i18n 全量化
+- ✅ 新增 `_t(key, params)` 模板助手，支持 `{placeholder}` 参数替换
+- ✅ ~85 个 toast/alert 键值 + 5 个 confirm 键值添加至 `zh.js` / `en.js`
+- ✅ 替换前端 ~83 处硬编码中文字符串
+
+### C.3 Tab 2 Skills Zen + Lucide
+- ✅ Skills 面板 + 4 个关联模态框全部 emoji → Lucide SVG 图标
+
+### C.4 Tab 3 动态设计 Zen + Lucide
+- ✅ ~24 个 emoji 替换为 Lucide 图标 + 预置详情模态框
+
+### C.5 Tab 4 AI 管理 + 设置模态框 Zen + Lucide
+- ✅ ~35 个 emoji 替换为 Lucide 图标
+
+### C.6 Qwen3.5-0.8B 模型集成
+- ✅ **后端** `localModelManager.js`：
+  - `MODEL_REGISTRY` 新增 `qwen3.5-0.8b`（Apache-2.0, 262K上下文, ~600MB）
+  - `MODEL_FILE_PATTERNS` 新增 `qwen3.5-0.8b` 匹配规则
+  - `isGenerationAvailable()` 支持双生成模型检测
+  - `generate()` 动态选择已加载模型（优先 Qwen3.5）
+- ✅ **前端** `script.js`：
+  - 模型存储从 type-based 改为 ID-based
+  - `isLocalModelReady` 检查 3 个模型 ID
+- ✅ **前端** `index.html`：
+  - 新增 Qwen3.5-0.8B 模型卡片（✨ sparkles + NEW 徽章）
+  - Qwen3/分类卡片全部改为 ID 引用
+  - 测试按钮、系统信息同步更新
+- ✅ **i18n**：`qwen35Model` / `qwen35Desc` 双语键值
+
+### C.7 工程清理
+- ✅ 删除根目录 6 个空 .md 文件（实际内容在 `rules/` 中）
+- ✅ 删除 14 个空调试脚本 + 1 个一次性数据生成工具
+- ✅ 删除 `docs/` 中 4 个空 Python 工具脚本 + 1 个空旧版报告
+- ✅ 测试用例同步更新：总大小限制 800MB→1.5GB，错误消息匹配，新增 Qwen3.5 覆盖测试
 
 ---
 

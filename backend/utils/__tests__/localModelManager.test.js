@@ -32,6 +32,14 @@ describe('MODEL_REGISTRY', () => {
         expect(MODEL_REGISTRY['qwen3-0.6b'].format).toBe('gguf');
     });
 
+    test('应包含 qwen3.5-0.8b 模型定义', () => {
+        expect(MODEL_REGISTRY['qwen3.5-0.8b']).toBeDefined();
+        expect(MODEL_REGISTRY['qwen3.5-0.8b'].type).toBe('generation');
+        expect(MODEL_REGISTRY['qwen3.5-0.8b'].runtime).toBe('node-llama-cpp');
+        expect(MODEL_REGISTRY['qwen3.5-0.8b'].format).toBe('gguf');
+        expect(MODEL_REGISTRY['qwen3.5-0.8b'].contextLength).toBe(262144);
+    });
+
     test('应包含 tiny-toxic-detector 模型定义', () => {
         expect(MODEL_REGISTRY['tiny-toxic-detector']).toBeDefined();
         expect(MODEL_REGISTRY['tiny-toxic-detector'].type).toBe('classification');
@@ -53,10 +61,10 @@ describe('MODEL_REGISTRY', () => {
         }
     });
 
-    test('总模型大小应小于 800MB', () => {
+    test('总模型大小应小于 1.5GB', () => {
         const totalSize = Object.values(MODEL_REGISTRY)
             .reduce((sum, m) => sum + m.sizeBytes, 0);
-        const maxSize = 800 * 1024 * 1024; // 800 MB
+        const maxSize = 1.5 * 1024 * 1024 * 1024; // 1.5 GB
         expect(totalSize).toBeLessThan(maxSize);
     });
 });
@@ -181,6 +189,11 @@ describe('LocalModelManager', () => {
 
         test('qwen3-0.6b 加载后应返回 true', () => {
             manager._updateStatus('qwen3-0.6b', MODEL_STATUS.READY);
+            expect(manager.isGenerationAvailable()).toBe(true);
+        });
+
+        test('qwen3.5-0.8b 加载后应返回 true', () => {
+            manager._updateStatus('qwen3.5-0.8b', MODEL_STATUS.READY);
             expect(manager.isGenerationAvailable()).toBe(true);
         });
     });
@@ -346,7 +359,7 @@ describe('LocalModelManager', () => {
     describe('generate', () => {
         test('模型未加载时应抛出错误', async () => {
             await expect(manager.generate('test'))
-                .rejects.toThrow('生成模型未加载');
+                .rejects.toThrow('没有可用的生成模型');
         });
     });
 

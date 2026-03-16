@@ -280,6 +280,30 @@ function promptAtelierApp() {
     },
 
     /**
+     * 🌐 i18n 辅助方法 — 在 JS 代码中获取翻译文本
+     * 支持占位符替换: _t('toast.foundModels', { n: 5 }) → "获取到 5 个模型"
+     */
+    _t(key, params) {
+      let text;
+      try {
+        text = this.$store?.i18n?.t?.(key);
+      } catch { /* ignore */ }
+      if (!text || text === key) {
+        // fallback: 直接从 window.i18nData 读取
+        const locale = this.$store?.i18n?.locale || 'zh';
+        const data = window.i18nData?.[locale];
+        text = key.split('.').reduce((obj, k) => obj?.[k], data) || key;
+      }
+      // 替换占位符 {xxx}
+      if (params && typeof text === 'string') {
+        for (const [k, v] of Object.entries(params)) {
+          text = text.replace(new RegExp(`\\{${k}\\}`, 'g'), v);
+        }
+      }
+      return text;
+    },
+
+    /**
      * 🔄 Phase 0: localStorage 旧键名迁移
      * 将 promptcraft_* 前缀的键迁移到 atelier_* 前缀，确保老用户升级后设置不丢失
      * 此函数仅在检测到旧键时执行一次性迁移
@@ -334,7 +358,7 @@ function promptAtelierApp() {
 
     saveSettings() {
       localStorage.setItem('atelier_settings', JSON.stringify(this.settings));
-      this.showToast('设置已保存', 'success');
+      this.showToast(this._t('toast.settingsSaved'), 'success');
       this.showSettings = false;
     },
 
@@ -357,7 +381,7 @@ function promptAtelierApp() {
         enabled: this.dynamicUseCustomConfig,
         config: this.dynamicConfig
       }));
-      this.showToast('动态设计 API 配置已保存', 'success');
+      this.showToast(this._t('toast.dynamicConfigSaved'), 'success');
     },
 
     /**
@@ -397,7 +421,7 @@ function promptAtelierApp() {
      */
     async refreshDynamicModels() {
       if (!this.dynamicConfig.baseUrl) {
-        this.showToast('请先设置 API 地址', 'warning');
+        this.showToast(this._t('toast.pleaseSetApiUrl'), 'warning');
         return;
       }
       this.dynamicModelsLoading = true;
@@ -416,13 +440,13 @@ function promptAtelierApp() {
           if (this.dynamicAvailableModels.length > 0 && !this.dynamicConfig.model) {
             this.dynamicConfig.model = this.dynamicAvailableModels[0].id;
           }
-          this.showToast(`获取到 ${data.count || data.models.length} 个模型`, 'success');
+          this.showToast(this._t('toast.foundModels', { n: data.count || data.models.length }), 'success');
         } else {
-          this.showToast(data.error || '获取模型列表失败', 'error');
+          this.showToast(data.error || this._t('toast.fetchModelsFail'), 'error');
         }
       } catch (e) {
         console.error('Failed to refresh dynamic models:', e);
-        this.showToast('获取模型列表失败: ' + e.message, 'error');
+        this.showToast(this._t('toast.fetchModelsFail') + ': ' + e.message, 'error');
       } finally {
         this.dynamicModelsLoading = false;
       }
@@ -443,7 +467,7 @@ function promptAtelierApp() {
     // 🔥 Phase 9: 统一的模型列表获取
     async refreshModels() {
       if (!this.settings.baseUrl) {
-        this.showToast('请先填写 API 地址', 'error');
+        this.showToast(this._t('toast.pleaseEnterApiUrl'), 'error');
         return;
       }
 
@@ -464,18 +488,18 @@ function promptAtelierApp() {
         
         if (data.success && data.models.length > 0) {
           this.availableModels = data.models;
-          this.showToast(`发现 ${data.count} 个可用模型`, 'success');
+          this.showToast(this._t('toast.foundAvailModels', { n: data.count }), 'success');
           
           // 如果当前没有选择模型，自动选择第一个
           if (!this.settings.model && data.models.length > 0) {
             this.settings.model = data.models[0].id;
           }
         } else {
-          this.showToast(data.error || '未找到可用模型', 'error');
+          this.showToast(data.error || this._t('toast.noModelsFound'), 'error');
         }
       } catch (error) {
         console.error('Failed to fetch models:', error);
-        this.showToast('获取模型列表失败', 'error');
+        this.showToast(this._t('toast.fetchModelsFail'), 'error');
       } finally {
         this.modelsLoading = false;
       }
@@ -527,7 +551,7 @@ function promptAtelierApp() {
         }
       } catch (error) {
         console.error('Failed to load history:', error);
-        this.showToast('加载历史记录失败', 'error');
+        this.showToast(this._t('toast.loadHistoryFail'), 'error');
       }
     },
 
@@ -547,7 +571,7 @@ function promptAtelierApp() {
         }
       } catch (error) {
         console.error('Failed to load favorites:', error);
-        this.showToast('加载收藏失败', 'error');
+        this.showToast(this._t('toast.loadFavoritesFail'), 'error');
       }
     },
 
@@ -573,33 +597,33 @@ function promptAtelierApp() {
 
     // 删除历史记录
     async deleteHistoryRecord(id) {
-      if (!confirm('确定要删除这条记录吗？')) return;
+      if (!confirm(this._t('confirm.deleteRecord'))) return;
       try {
         const response = await fetch(`/api/history/${id}`, { method: 'DELETE' });
         const data = await response.json();
         if (data.success) {
           this.historyRecords = this.historyRecords.filter(r => r.id !== id);
           this.historyCount--;
-          this.showToast('已删除', 'success');
+          this.showToast(this._t('toast.deleted'), 'success');
         }
       } catch (error) {
-        this.showToast('删除失败', 'error');
+        this.showToast(this._t('toast.deleteFail'), 'error');
       }
     },
 
     // 清空历史记录
     async clearHistory() {
-      if (!confirm('确定要清空所有历史记录吗？此操作不可恢复！')) return;
+      if (!confirm(this._t('confirm.clearAllHistory'))) return;
       try {
         const response = await fetch('/api/history', { method: 'DELETE' });
         const data = await response.json();
         if (data.success) {
           this.historyRecords = [];
           this.historyCount = 0;
-          this.showToast('已清空历史记录', 'success');
+          this.showToast(this._t('toast.historyCleaned'), 'success');
         }
       } catch (error) {
-        this.showToast('清空失败', 'error');
+        this.showToast(this._t('toast.clearFail'), 'error');
       }
     },
 
@@ -623,7 +647,7 @@ function promptAtelierApp() {
           };
           this.currentHistoryRecord = record;
           this.historyDropdownOpen = false;
-          this.showToast('已加载历史记录', 'success');
+          this.showToast(this._t('toast.historyLoaded'), 'success');
         });
       } else {
         // 如果找不到预设，直接复制提示词
@@ -635,7 +659,7 @@ function promptAtelierApp() {
     // 打开收藏对话框
     openFavoriteModal() {
       if (!this.currentHistoryRecord || !this.designResult) {
-        this.showToast('请先生成提示词', 'error');
+        this.showToast(this._t('toast.generateFirst'), 'error');
         return;
       }
       
@@ -680,28 +704,28 @@ function promptAtelierApp() {
           if (this.currentHistoryRecord) {
             this.currentHistoryRecord.isFavorited = true;
           }
-          this.showToast('收藏成功！', 'success');
+          this.showToast(this._t('toast.favoriteSuccess'), 'success');
         } else {
-          this.showToast(data.error || '收藏失败', 'error');
+          this.showToast(data.error || this._t('toast.favoriteFail'), 'error');
         }
       } catch (error) {
-        this.showToast('收藏失败', 'error');
+        this.showToast(this._t('toast.favoriteFail'), 'error');
       }
     },
 
     // 删除收藏
     async deleteFavorite(id) {
-      if (!confirm('确定要删除这个收藏吗？')) return;
+      if (!confirm(this._t('confirm.deleteFavorite'))) return;
       try {
         const response = await fetch(`/api/favorites/${id}`, { method: 'DELETE' });
         const data = await response.json();
         if (data.success) {
           this.favoriteItems = this.favoriteItems.filter(i => i.id !== id);
           this.favoritesCount--;
-          this.showToast('已删除', 'success');
+          this.showToast(this._t('toast.deleted'), 'success');
         }
       } catch (error) {
-        this.showToast('删除失败', 'error');
+        this.showToast(this._t('toast.deleteFail'), 'error');
       }
     },
 
@@ -718,7 +742,7 @@ function promptAtelierApp() {
             }
           });
           this.favoritesDropdownOpen = false;
-          this.showToast('已加载收藏参数，可以修改后重新生成', 'success');
+          this.showToast(this._t('toast.favoriteLoaded'), 'success');
         });
       } else {
         this.copyToClipboard(item.prompt);
@@ -792,7 +816,7 @@ function promptAtelierApp() {
         }
       } catch (error) {
         console.error('Failed to load design presets:', error);
-        this.showToast('加载设计模板失败', 'error');
+        this.showToast(this._t('toast.loadPresetsFail'), 'error');
       }
     },
 
@@ -815,7 +839,7 @@ function promptAtelierApp() {
           this.loadAvailableReferences(preset.id);
         }
       } catch (error) {
-        this.showToast('加载模板详情失败', 'error');
+        this.showToast(this._t('toast.loadPresetDetailFail'), 'error');
       }
     },
     
@@ -1001,7 +1025,7 @@ function promptAtelierApp() {
               tips: applyData.data.outputTips || [],
               error: aiError.message
             };
-            this.showToast('⚠️ AI 调用失败: ' + aiError.message, 'error');
+            this.showToast(this._t('toast.aiCallFail', { msg: aiError.message }), 'error');
           }
         } else {
           this.designResult = {
@@ -1010,10 +1034,10 @@ function promptAtelierApp() {
             keywords: applyData.data.keywords || [],
             tips: applyData.data.outputTips || []
           };
-          this.showToast('⚠️ 未配置 AI API 且未启用本地模型，无法生成专业图像提示词。请在设置中配置 API 或在离线模式中启用本地模型优先。', 'warning');
+          this.showToast(this._t('toast.noAiConfigNoLocal'), 'warning');
         }
       } catch (error) {
-        this.showToast(error.message || '生成失败', 'error');
+        this.showToast(error.message || this._t('toast.genFail'), 'error');
       } finally {
         this.designLoading = false;
       }
@@ -1593,7 +1617,7 @@ A minimalist logo design for a BBQ restaurant, featuring stylized flame and gril
         if (data.success && data.data) {
           // Phase 16: 显示降级通知
           if (data.data.fallback) {
-            this.showToast('⚠️ 外部 API 不可用，已自动切换到本地模型', 'info');
+            this.showToast(this._t('toast.apiFallbackLocal'), 'info');
           } else if (data.data.source === 'local') {
             console.log('🏠 使用本地模型完成');
           }
@@ -1635,7 +1659,7 @@ A minimalist logo design for a BBQ restaurant, featuring stylized flame and gril
         }
       } catch (error) {
         console.error('加载 Skills 失败:', error);
-        this.showToast('加载技能列表失败', 'error');
+        this.showToast(this._t('toast.loadSkillsFail'), 'error');
       } finally {
         this.skillsLoading = false;
       }
@@ -1648,12 +1672,12 @@ A minimalist logo design for a BBQ restaurant, featuring stylized flame and gril
         const data = await response.json();
         if (data.success) {
           this.skills = data.data || [];
-          this.showToast(`扫描完成，发现 ${data.count} 个技能`, 'success');
+          this.showToast(this._t('toast.scanDone', { n: data.count }), 'success');
         } else {
           throw new Error(data.error || '扫描失败');
         }
       } catch (error) {
-        this.showToast('重新扫描失败', 'error');
+        this.showToast(this._t('toast.rescanFail'), 'error');
       } finally {
         this.skillsLoading = false;
       }
@@ -1669,7 +1693,7 @@ A minimalist logo design for a BBQ restaurant, featuring stylized flame and gril
           throw new Error(data.error || '加载失败');
         }
       } catch (error) {
-        this.showToast('加载技能详情失败', 'error');
+        this.showToast(this._t('toast.loadSkillDetailFail'), 'error');
       }
     },
 
@@ -1685,12 +1709,12 @@ A minimalist logo design for a BBQ restaurant, featuring stylized flame and gril
           // 更新本地状态
           const skill = this.skills.find(s => s.id === skillId);
           if (skill) skill.enabled = enabled;
-          this.showToast(enabled ? '技能已启用' : '技能已禁用', 'success');
+          this.showToast(enabled ? this._t('toast.skillEnabled') : this._t('toast.skillDisabled'), 'success');
         } else {
           throw new Error(data.error || '操作失败');
         }
       } catch (error) {
-        this.showToast('切换状态失败', 'error');
+        this.showToast(this._t('toast.toggleFail'), 'error');
         // 恢复本地状态
         await this.loadSkills();
       }
@@ -1698,7 +1722,7 @@ A minimalist logo design for a BBQ restaurant, featuring stylized flame and gril
 
     async createSkill() {
       if (!this.newSkill.id || !this.newSkill.name) {
-        this.showToast('请填写 ID 和名称', 'error');
+        this.showToast(this._t('toast.fillIdAndName'), 'error');
         return;
       }
 
@@ -1721,7 +1745,7 @@ A minimalist logo design for a BBQ restaurant, featuring stylized flame and gril
         const data = await response.json();
 
         if (data.success) {
-          this.showToast(`技能 "${skillData.name}" 创建成功！`, 'success');
+          this.showToast(this._t('toast.skillCreated', { name: skillData.name }), 'success');
           this.showCreateSkillModal = false;
           this.resetNewSkill();
           await this.loadSkills();
@@ -1729,7 +1753,7 @@ A minimalist logo design for a BBQ restaurant, featuring stylized flame and gril
           throw new Error(data.error || '创建失败');
         }
       } catch (error) {
-        this.showToast(error.message || '创建技能失败', 'error');
+        this.showToast(error.message || this._t('toast.skillCreateFail'), 'error');
       }
     },
 
@@ -1758,14 +1782,14 @@ A minimalist logo design for a BBQ restaurant, featuring stylized flame and gril
         const data = await response.json();
 
         if (data.success) {
-          this.showToast('技能已删除', 'success');
+          this.showToast(this._t('toast.skillDeleted'), 'success');
           this.skillToDelete = null;
           await this.loadSkills();
         } else {
           throw new Error(data.error || '删除失败');
         }
       } catch (error) {
-        this.showToast('删除技能失败', 'error');
+        this.showToast(this._t('toast.skillDeleteFail'), 'error');
       }
     },
 
@@ -1783,12 +1807,12 @@ A minimalist logo design for a BBQ restaurant, featuring stylized flame and gril
           a.download = `skill-${skillId}.json`;
           a.click();
           URL.revokeObjectURL(url);
-          this.showToast('技能已导出', 'success');
+          this.showToast(this._t('toast.skillExported'), 'success');
         } else {
           throw new Error(data.error || '导出失败');
         }
       } catch (error) {
-        this.showToast('导出技能失败', 'error');
+        this.showToast(this._t('toast.skillExportFail'), 'error');
       }
     },
 
@@ -1809,13 +1833,13 @@ A minimalist logo design for a BBQ restaurant, featuring stylized flame and gril
         const result = await response.json();
 
         if (result.success) {
-          this.showToast(`技能 "${result.data.name}" 导入成功！`, 'success');
+          this.showToast(this._t('toast.skillImported', { name: result.data.name }), 'success');
           await this.loadSkills();
         } else {
           throw new Error(result.error || '导入失败');
         }
       } catch (error) {
-        this.showToast(error.message || '导入失败，请检查 JSON 格式', 'error');
+        this.showToast(error.message || this._t('toast.skillImportFail'), 'error');
       }
 
       // 清空文件输入
@@ -1842,7 +1866,7 @@ A minimalist logo design for a BBQ restaurant, featuring stylized flame and gril
           throw new Error(data.error || '加载失败');
         }
       } catch (error) {
-        this.showToast('加载技能失败', 'error');
+        this.showToast(this._t('toast.skillLoadFail'), 'error');
       }
     },
 
@@ -1867,14 +1891,14 @@ A minimalist logo design for a BBQ restaurant, featuring stylized flame and gril
         const data = await response.json();
 
         if (data.success) {
-          this.showToast('技能已更新', 'success');
+          this.showToast(this._t('toast.skillUpdated'), 'success');
           this.editingSkill = null;
           await this.loadSkills();
         } else {
           throw new Error(data.error || '更新失败');
         }
       } catch (error) {
-        this.showToast(error.message || '保存失败', 'error');
+        this.showToast(error.message || this._t('toast.skillSaveFail'), 'error');
       }
     },
 
@@ -1907,9 +1931,9 @@ A minimalist logo design for a BBQ restaurant, featuring stylized flame and gril
       if (!text) return;
       try {
         await navigator.clipboard.writeText(text);
-        this.showToast('已复制到剪贴板', 'success');
+        this.showToast(this._t('toast.copiedToClipboard'), 'success');
       } catch (error) {
-        this.showToast('复制失败', 'error');
+        this.showToast(this._t('toast.copyFail'), 'error');
       }
     },
 
@@ -1987,14 +2011,14 @@ A minimalist logo design for a BBQ restaurant, featuring stylized flame and gril
     async generateDynamicDesign() {
       // 验证输入
       if (!this.dynamicDesignFromAssistant && !this.dynamicParams.brandName && !this.dynamicParams.description) {
-        this.showToast('请至少输入品牌名称或设计描述', 'error');
+        this.showToast(this._t('toast.needBrandOrDesc'), 'error');
         return;
       }
 
       // 🎬 使用独立配置或全局配置
       const apiConfig = this.getDynamicDesignApiConfig();
       if (!apiConfig.baseUrl || !apiConfig.model) {
-        this.showToast('请先配置 AI 服务（API 地址和模型）—— 可在全局设置或动态设计独立配置中设置', 'error');
+        this.showToast(this._t('toast.needApiConfig'), 'error');
         return;
       }
 
@@ -2022,12 +2046,12 @@ A minimalist logo design for a BBQ restaurant, featuring stylized flame and gril
         this.dynamicCodeEdit = data.data.code;
         this.dynamicSafetyWarnings = data.data.safety?.warnings || [];
 
-        this.showToast('🎬 动态设计生成成功！', 'success');
+        this.showToast(this._t('toast.dynamicGenSuccess'), 'success');
         console.log('[DynamicDesign] 生成完成', data.data.metadata);
 
       } catch (error) {
         console.error('[DynamicDesign] 生成失败:', error);
-        this.showToast(`生成失败: ${error.message}`, 'error');
+        this.showToast(this._t('toast.dynamicGenFail', { msg: error.message }), 'error');
       } finally {
         this.dynamicLoading = false;
       }
@@ -2039,7 +2063,7 @@ A minimalist logo design for a BBQ restaurant, featuring stylized flame and gril
     applyCodeEdit() {
       if (this.dynamicCodeEdit.trim()) {
         this.dynamicCode = this.dynamicCodeEdit;
-        this.showToast('代码已应用到预览', 'success');
+        this.showToast(this._t('toast.codeApplied'), 'success');
       }
     },
 
@@ -2051,7 +2075,7 @@ A minimalist logo design for a BBQ restaurant, featuring stylized flame and gril
       if (iframe && this.dynamicCode) {
         iframe.srcdoc = '';
         setTimeout(() => { iframe.srcdoc = this.dynamicCode; }, 50);
-        this.showToast('预览已刷新', 'info');
+        this.showToast(this._t('toast.previewRefreshed'), 'info');
       }
     },
 
@@ -2071,7 +2095,7 @@ A minimalist logo design for a BBQ restaurant, featuring stylized flame and gril
       // 🎬 使用独立配置或全局配置
       const apiConfig = this.getDynamicDesignApiConfig();
       if (!apiConfig.baseUrl || !apiConfig.model) {
-        this.showToast('请先配置 AI 服务', 'error');
+        this.showToast(this._t('toast.needApiConfigShort'), 'error');
         return;
       }
 
@@ -2098,11 +2122,11 @@ A minimalist logo design for a BBQ restaurant, featuring stylized flame and gril
         this.dynamicSafetyWarnings = data.data.safety?.warnings || [];
         this.dynamicIterateInstruction = '';
 
-        this.showToast('🔄 迭代修改成功！', 'success');
+        this.showToast(this._t('toast.iterateSuccess'), 'success');
 
       } catch (error) {
         console.error('[DynamicDesign] 迭代失败:', error);
-        this.showToast(`迭代失败: ${error.message}`, 'error');
+        this.showToast(this._t('toast.iterateFail', { msg: error.message }), 'error');
       } finally {
         this.dynamicIterating = false;
       }
@@ -2124,7 +2148,7 @@ A minimalist logo design for a BBQ restaurant, featuring stylized flame and gril
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
-        this.showToast('HTML 文件已下载', 'success');
+        this.showToast(this._t('toast.htmlDownloaded'), 'success');
       }
     },
 
@@ -2305,12 +2329,12 @@ window.addEventListener('load', function() {
       if (this.gifExporting) return;
 
       if (!window.GIF) {
-        this.showToast('gif.js 库未加载，GIF 导出不可用', 'error');
+        this.showToast(this._t('toast.gifLibMissing'), 'error');
         return;
       }
 
       this.gifExporting = true;
-      this.showToast('正在截取动画帧...', 'info');
+      this.showToast(this._t('toast.capturingFrames'), 'info');
 
       let cleanup = null;
       try {
@@ -2321,7 +2345,7 @@ window.addEventListener('load', function() {
         });
         cleanup = cleanupFn;
 
-        this.showToast(`已截取 ${frames.length} 帧，正在编码 GIF...`, 'info');
+        this.showToast(this._t('toast.capturedFrames', { n: frames.length }), 'info');
 
         // 用本地画布将 Image 绘制到 Canvas 再传给 gif.js
         const tempCanvas = document.createElement('canvas');
@@ -2360,11 +2384,11 @@ window.addEventListener('load', function() {
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
-        this.showToast(`GIF 动图已下载（${frames.length} 帧，${(gifBlob.size / 1024).toFixed(0)}KB）`, 'success');
+        this.showToast(this._t('toast.gifDownloaded', { frames: frames.length, size: (gifBlob.size / 1024).toFixed(0) }), 'success');
 
       } catch (e) {
         console.error('GIF export failed:', e);
-        this.showToast('GIF 导出失败: ' + e.message, 'error');
+        this.showToast(this._t('toast.gifExportFail', { msg: e.message }), 'error');
       } finally {
         if (cleanup) cleanup();
         this.gifExporting = false;
@@ -2381,12 +2405,12 @@ window.addEventListener('load', function() {
       if (this.videoExporting) return;
 
       if (!window.MediaRecorder) {
-        this.showToast('您的浏览器不支持视频录制功能', 'error');
+        this.showToast(this._t('toast.videoNotSupported'), 'error');
         return;
       }
 
       this.videoExporting = true;
-      this.showToast('正在截取动画帧...', 'info');
+      this.showToast(this._t('toast.capturingFrames'), 'info');
 
       let cleanup = null;
       try {
@@ -2399,7 +2423,7 @@ window.addEventListener('load', function() {
         });
         cleanup = cleanupFn;
 
-        this.showToast(`已截取 ${frames.length} 帧，正在编码视频...`, 'info');
+        this.showToast(this._t('toast.capturedFramesVideo', { n: frames.length }), 'info');
 
         // 创建录制画布
         const recordCanvas = document.createElement('canvas');
@@ -2460,11 +2484,11 @@ window.addEventListener('load', function() {
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
-        this.showToast(`${isMP4 ? 'MP4' : 'WebM'} 视频已下载（${frames.length} 帧，${(videoBlob.size / 1024).toFixed(0)}KB）`, 'success');
+        this.showToast(this._t('toast.videoDownloaded', { format: isMP4 ? 'MP4' : 'WebM', frames: frames.length, size: (videoBlob.size / 1024).toFixed(0) }), 'success');
 
       } catch (e) {
         console.error('Video export failed:', e);
-        this.showToast('视频导出失败: ' + e.message, 'error');
+        this.showToast(this._t('toast.videoExportFail', { msg: e.message }), 'error');
       } finally {
         if (cleanup) cleanup();
         this.videoExporting = false;
@@ -2477,8 +2501,8 @@ window.addEventListener('load', function() {
 
     /**
      * 加载本地模型综合状态
-     * 后端返回的模型 key 是 'qwen3-0.6b' / 'tiny-toxic-detector'
-     * 前端归一化为 'generation' / 'classification' 方便模板引用
+     * 后端返回的模型 key 是 'qwen3-0.6b' / 'qwen3.5-0.8b' / 'tiny-toxic-detector'
+     * 前端按模型 ID 直接存储，支持多个同类型模型
      */
     async loadLocalModelStatus() {
       try {
@@ -2486,12 +2510,11 @@ window.addEventListener('load', function() {
         const data = await res.json();
         if (data.success) {
           const raw = data.data;
-          // 归一化模型结构: 按 type 分组
+          // 按模型 ID 直接存储（支持多个同类型模型）
           const models = {};
           if (raw.models) {
             for (const [key, info] of Object.entries(raw.models)) {
-              const type = info.type || key; // 'generation' or 'classification'
-              models[type] = { ...info, _backendId: key };
+              models[key] = { ...info, _backendId: key };
             }
           }
           this.localModels = {
@@ -2506,17 +2529,13 @@ window.addEventListener('load', function() {
     },
 
     /**
-     * 将前端模型类型名解析为后端实际模型 ID
-     * @param {string} typeOrId - 'generation' | 'classification' | 实际模型ID
+     * 将前端模型 ID 传递给后端
+     * @param {string} typeOrId - 模型ID，如 'qwen3-0.6b' / 'qwen3.5-0.8b' / 'tiny-toxic-detector'
      * @returns {string} 后端模型 ID
      */
     _resolveModelId(typeOrId) {
-      // 如果 localModels 中有归一化数据，取 _backendId
-      const model = this.localModels?.models?.[typeOrId];
-      if (model?._backendId) return model._backendId;
-      // 硬编码映射作为兜底
-      const map = { generation: 'qwen3-0.6b', classification: 'tiny-toxic-detector' };
-      return map[typeOrId] || typeOrId;
+      // 直接返回模型 ID（v6.0 起模型按 ID 存储）
+      return typeOrId;
     },
 
     /**
@@ -2549,7 +2568,7 @@ window.addEventListener('load', function() {
         if (!data.success) {
           throw new Error(data.error?.message || '下载启动失败');
         }
-        this.showToast(`模型 ${modelId} 开始下载...`, 'info');
+        this.showToast(this._t('toast.modelDownloadStart', { id: modelId }), 'info');
 
         // SSE 监听下载进度
         const evtSource = new EventSource(`${MODEL_API}/download-progress`);
@@ -2563,12 +2582,12 @@ window.addEventListener('load', function() {
               if (msg.type === 'complete' || payload.status === 'completed') {
                 evtSource.close();
                 this.modelDownloading = null;
-                this.showToast(`模型 ${modelId} 下载完成！`, 'success');
+                this.showToast(this._t('toast.modelDownloadDone', { id: modelId }), 'success');
                 this.loadLocalModelStatus();
               } else if (msg.type === 'error' || payload.status === 'error') {
                 evtSource.close();
                 this.modelDownloading = null;
-                this.showToast(`下载失败: ${payload.error || '未知错误'}`, 'error');
+                this.showToast(this._t('toast.downloadFail', { msg: payload.error || 'Unknown' }), 'error');
               }
             }
           } catch (err) { /* ignore parse errors */ }
@@ -2579,7 +2598,7 @@ window.addEventListener('load', function() {
         };
       } catch (e) {
         this.modelDownloading = null;
-        this.showToast('下载失败: ' + e.message, 'error');
+        this.showToast(this._t('toast.downloadFail', { msg: e.message }), 'error');
       }
     },
 
@@ -2589,17 +2608,17 @@ window.addEventListener('load', function() {
     async loadModelToMemory(modelType) {
       const modelId = this._resolveModelId(modelType);
       try {
-        this.showToast(`正在加载模型 ${modelId}...`, 'info');
+        this.showToast(this._t('toast.modelLoading', { id: modelId }), 'info');
         const res = await fetch(`${MODEL_API}/${modelId}/load`, { method: 'POST' });
         const data = await res.json();
         if (data.success) {
-          this.showToast(`模型 ${modelId} 加载成功！`, 'success');
+          this.showToast(this._t('toast.modelLoadSuccess', { id: modelId }), 'success');
         } else {
           throw new Error(data.error?.message || '加载失败');
         }
         await this.loadLocalModelStatus();
       } catch (e) {
-        this.showToast('加载失败: ' + e.message, 'error');
+        this.showToast(this._t('toast.modelLoadFail', { msg: e.message }), 'error');
       }
     },
 
@@ -2612,11 +2631,11 @@ window.addEventListener('load', function() {
         const res = await fetch(`${MODEL_API}/${modelId}/unload`, { method: 'POST' });
         const data = await res.json();
         if (data.success) {
-          this.showToast(`模型 ${modelId} 已卸载`, 'info');
+          this.showToast(this._t('toast.modelUnloaded', { id: modelId }), 'info');
         }
         await this.loadLocalModelStatus();
       } catch (e) {
-        this.showToast('卸载失败: ' + e.message, 'error');
+        this.showToast(this._t('toast.modelUnloadFail', { msg: e.message }), 'error');
       }
     },
 
@@ -2625,16 +2644,16 @@ window.addEventListener('load', function() {
      */
     async deleteModel(modelType) {
       const modelId = this._resolveModelId(modelType);
-      if (!confirm(`确定要删除模型 ${modelId} 吗？删除后需要重新下载。`)) return;
+      if (!confirm(this._t('confirm.deleteModel', { id: modelId }))) return;
       try {
         const res = await fetch(`${MODEL_API}/${modelId}`, { method: 'DELETE' });
         const data = await res.json();
         if (data.success) {
-          this.showToast(`模型 ${modelId} 已删除`, 'info');
+          this.showToast(this._t('toast.modelDeleted', { id: modelId }), 'info');
         }
         await this.loadLocalModelStatus();
       } catch (e) {
-        this.showToast('删除失败: ' + e.message, 'error');
+        this.showToast(this._t('toast.modelDeleteFail', { msg: e.message }), 'error');
       }
     },
 
@@ -2643,7 +2662,7 @@ window.addEventListener('load', function() {
      */
     async testModelGenerate() {
       if (!this.modelTestInput.trim()) {
-        this.showToast('请输入测试文本', 'warning');
+        this.showToast(this._t('toast.pleaseEnterTestText'), 'warning');
         return;
       }
       this.modelTestLoading = true;
@@ -2677,7 +2696,7 @@ window.addEventListener('load', function() {
      */
     async testModelClassify() {
       if (!this.modelTestInput.trim()) {
-        this.showToast('请输入测试文本', 'warning');
+        this.showToast(this._t('toast.pleaseEnterTestText'), 'warning');
         return;
       }
       this.modelTestLoading = true;
@@ -2733,16 +2752,16 @@ window.addEventListener('load', function() {
           this.modelScanResult = data.data;
           const count = data.data?.found?.length || 0;
           if (count > 0) {
-            this.showToast(`发现 ${count} 个模型文件，状态已更新`, 'success');
+            this.showToast(this._t('toast.scanFoundModels', { n: count }), 'success');
           } else {
-            this.showToast('未发现新的模型文件。请将 .gguf 文件放入 models/ 目录后再试', 'warning');
+            this.showToast(this._t('toast.scanNoModels'), 'warning');
           }
           await this.loadLocalModelStatus();
         } else {
           throw new Error(data.error?.message || '扫描失败');
         }
       } catch (e) {
-        this.showToast('扫描失败: ' + e.message, 'error');
+        this.showToast(this._t('toast.scanFail', { msg: e.message }), 'error');
       } finally {
         this.modelScanLoading = false;
       }
@@ -2755,7 +2774,7 @@ window.addEventListener('load', function() {
       const modelId = this._resolveModelId(modelType);
       const sourcePath = this.modelImportPath?.trim();
       if (!sourcePath) {
-        this.showToast('请输入模型文件的完整路径', 'warning');
+        this.showToast(this._t('toast.pleaseEnterModelPath'), 'warning');
         return;
       }
       try {
@@ -2766,14 +2785,14 @@ window.addEventListener('load', function() {
         });
         const data = await res.json();
         if (data.success) {
-          this.showToast(`模型导入成功！(${data.data?.fileSizeDisplay || ''})`, 'success');
+          this.showToast(this._t('toast.modelImportSuccess', { size: data.data?.fileSizeDisplay || '' }), 'success');
           this.modelImportPath = '';
           await this.loadLocalModelStatus();
         } else {
           throw new Error(data.error?.message || '导入失败');
         }
       } catch (e) {
-        this.showToast('导入失败: ' + e.message, 'error');
+        this.showToast(this._t('toast.modelImportFail', { msg: e.message }), 'error');
       }
     },
 
@@ -2809,10 +2828,10 @@ window.addEventListener('load', function() {
         });
         const data = await res.json();
         if (data.success) {
-          this.showToast(this.safetyEnabled ? '安全审查已启用' : '安全审查已禁用', 'info');
+          this.showToast(this.safetyEnabled ? this._t('toast.safetyEnabled') : this._t('toast.safetyDisabled'), 'info');
         }
       } catch (e) {
-        this.showToast('更新安全配置失败', 'error');
+        this.showToast(this._t('toast.safetyConfigFail'), 'error');
       }
     },
 
@@ -2836,7 +2855,7 @@ window.addEventListener('load', function() {
      */
     async testSafetyCheck() {
       if (!this.safetyTestInput.trim()) {
-        this.showToast('请输入测试文本', 'warning');
+        this.showToast(this._t('toast.pleaseEnterTestText'), 'warning');
         return;
       }
       this.safetyTestLoading = true;
@@ -2864,16 +2883,16 @@ window.addEventListener('load', function() {
      * 重置安全统计
      */
     async resetSafetyStats() {
-      if (!confirm('确定要重置安全审查统计吗？')) return;
+      if (!confirm(this._t('confirm.resetSafetyStats'))) return;
       try {
         const res = await fetch(`${SAFETY_API}/stats/reset`, { method: 'POST' });
         const data = await res.json();
         if (data.success) {
           this.safetyStats = null;
-          this.showToast('安全统计已重置', 'success');
+          this.showToast(this._t('toast.safetyStatsReset'), 'success');
         }
       } catch (e) {
-        this.showToast('重置失败', 'error');
+        this.showToast(this._t('toast.resetFail'), 'error');
       }
     },
 
@@ -2895,7 +2914,7 @@ window.addEventListener('load', function() {
       localStorage.setItem('atelier_offline', JSON.stringify({
         preferLocal: this.offlinePreferLocal
       }));
-      this.showToast(this.offlinePreferLocal ? '已启用本地模型优先' : '已切换回外部 API 优先', 'info');
+      this.showToast(this.offlinePreferLocal ? this._t('toast.localModelPriorityOn') : this._t('toast.localModelPriorityOff'), 'info');
     },
 
     /**
@@ -2904,7 +2923,9 @@ window.addEventListener('load', function() {
     get isLocalModelReady() {
       const models = this.localModels?.models;
       if (!models) return false;
-      return models.generation?.status === 'ready' || models.classification?.status === 'ready';
+      return models['qwen3-0.6b']?.status === 'ready' 
+          || models['qwen3.5-0.8b']?.status === 'ready' 
+          || models['tiny-toxic-detector']?.status === 'ready';
     },
 
     /**

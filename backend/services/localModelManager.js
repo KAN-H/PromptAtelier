@@ -51,6 +51,23 @@ const MODEL_REGISTRY = {
         capabilities: ['text-generation', 'translation', 'intent-classification'],
         recommended: true
     },
+    'qwen3.5-0.8b': {
+        id: 'qwen3.5-0.8b',
+        name: 'Qwen3.5-0.8B',
+        description: '新一代超轻量模型，统一视觉语言基础，思考/非思考双模式，262K上下文',
+        type: 'generation',
+        runtime: 'node-llama-cpp',
+        format: 'gguf',
+        fileName: 'Qwen3.5-0.8B-Q4_K_M.gguf',
+        hfUri: 'hf:unsloth/Qwen3.5-0.8B-GGUF:Q4_K_M',
+        downloadUrl: 'https://huggingface.co/unsloth/Qwen3.5-0.8B-GGUF/resolve/main/Qwen3.5-0.8B-Q4_K_M.gguf',
+        sizeBytes: 630_000_000,    // ~600 MB (Q4_K_M)
+        sizeDisplay: '~600 MB',
+        contextLength: 262144,
+        license: 'Apache-2.0',
+        capabilities: ['text-generation', 'vision-language', 'reasoning', 'coding', 'agents'],
+        recommended: true
+    },
     'tiny-toxic-detector': {
         id: 'tiny-toxic-detector',
         name: 'Tiny-Toxic-Detector',
@@ -86,6 +103,17 @@ const MODEL_FILE_PATTERNS = {
         ],
         extension: '.gguf',
         // 最小文件大小（防止误匹配空文件或损坏文件）
+        minSize: 100_000_000  // 100MB
+    },
+    'qwen3.5-0.8b': {
+        exactName: 'Qwen3.5-0.8B-Q4_K_M.gguf',
+        patterns: [
+            /^qwen3\.?5[-_]?0\.?8b[-_]?q4[-_]?k[-_]?m\.gguf$/i,
+            /^qwen3\.?5[-_.].*0\.?8.*\.gguf$/i,
+            /^Qwen3\.5[-_]0\.8B.*Q4_K_M\.gguf$/i,
+            /^qwen.*3\.?5.*0\.?8.*\.gguf$/i
+        ],
+        extension: '.gguf',
         minSize: 100_000_000  // 100MB
     },
     'tiny-toxic-detector': {
@@ -868,7 +896,7 @@ class LocalModelManager extends EventEmitter {
     // ============================================================
 
     /**
-     * 文本生成 — 通过 Qwen3-0.6B
+     * 文本生成 — 通过已加载的生成模型（Qwen3.5 优先，Qwen3 兜底）
      * 
      * @param {string} prompt - 用户输入
      * @param {string} [systemPrompt] - 系统提示词
@@ -880,10 +908,10 @@ class LocalModelManager extends EventEmitter {
      * @returns {Promise<string>} 生成的文本
      */
     async generate(prompt, systemPrompt = '', options = {}) {
-        const modelId = 'qwen3-0.6b';
+        const modelId = this.getActiveGenerationModelId();
 
-        if (!this.isAvailable(modelId)) {
-            throw new Error('生成模型未加载。请先调用 loadModel("qwen3-0.6b")');
+        if (!modelId) {
+            throw new Error('没有可用的生成模型。请先加载 Qwen3.5-0.8B 或 Qwen3-0.6B');
         }
 
         const {
@@ -1065,7 +1093,16 @@ class LocalModelManager extends EventEmitter {
      * 检查是否有任何生成模型可用
      */
     isGenerationAvailable() {
-        return this.isAvailable('qwen3-0.6b');
+        return this.isAvailable('qwen3.5-0.8b') || this.isAvailable('qwen3-0.6b');
+    }
+
+    /**
+     * 获取当前可用的生成模型 ID（优先使用 Qwen3.5）
+     */
+    getActiveGenerationModelId() {
+        if (this.isAvailable('qwen3.5-0.8b')) return 'qwen3.5-0.8b';
+        if (this.isAvailable('qwen3-0.6b')) return 'qwen3-0.6b';
+        return null;
     }
 
     /**
