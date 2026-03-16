@@ -204,7 +204,17 @@ PromptAtelier/
 - 📝 历史记录与收藏功能
 - 🎨 16种设计角色预设
 
-## �📄 许可证
+## 🤖 自动化发布 | Automated Release
+
+本项目使用 [semantic-release](https://github.com/semantic-release/semantic-release) 实现全自动版本管理和发布：
+- ✅ 基于提交信息自动确定版本号（major/minor/patch）
+- ✅ 自动生成和更新 CHANGELOG.md
+- ✅ 自动创建 Git 标签
+- ✅ 自动发布 GitHub Releases
+
+**提交信息规范**：遵循 [Conventional Commits](https://www.conventionalcommits.org/) 规范
+
+## 📄 许可证
 
 本项目遵循 [MIT 许可证](LICENSE)。
 
