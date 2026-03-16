@@ -1,38 +1,43 @@
-# PromptCraft
+# PromptAtelier
 
 <div align="center">
 
 **🎨 专业设计提示词生成器 | Professional Design Prompt Generator**
 
-[![Version](https://img.shields.io/badge/version-4.3.0-blue.svg)](PROGRESS.md)
+[![Version](https://img.shields.io/badge/version-5.0.0-blue.svg)](PROGRESS.md)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Node](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)](package.json)
+[![Tests](https://img.shields.io/badge/tests-500%2B%20passed-brightgreen.svg)](package.json)
 
 </div>
 
-PromptCraft 是一个面向设计师和内容创作者的智能提示词生成器，专注于生成用于图像生成模型（如 Midjourney、DALL-E、Stable Diffusion、Flux 等）的专业提示词。支持中文输入，自动输出英文提示词。
+PromptAtelier 是一个面向设计师和内容创作者的智能提示词生成器，专注于生成用于图像生成模型（如 Midjourney、DALL-E、Stable Diffusion、Flux 等）的专业提示词。支持中文输入，自动输出英文提示词。**v5.0 新增本地 AI 模型推理、内容安全审查和离线模式**。
 
-PromptCraft is an intelligent prompt generator for designers and creators. It crafts production-ready prompts for image models (Midjourney, DALL-E, Stable Diffusion, Flux, etc.), accepting Chinese input and returning polished English outputs.
+## ✨ 核心功能
 
-## 🆕 v4.3.0 更新 / What's New in v4.3.0
-- ✂️ 提示词压缩服务（完整/精简/超轻量），新增端点：`/api/prompts/compress`、`/estimate-tokens`、`/compression-levels`、`/recommend-compression`
-- 🖥️ 前端压缩控制：设置面板与生成界面提供压缩开关、等级选择与 Token 统计
-- 📚 133+ 设计专业术语库（13 类），覆盖构图、灯光、色调、材质等
-- 🎨 9 个设计角色参数升级（Logo、IP 角色、UI、图标、插画、书籍封面等），预设升级至 `presets.json v2.1.0`
+### 🎨 设计助手
+- **16种专业设计角色**：Logo设计、促销海报、品牌海报、IP角色、广告创意、包装设计、UI界面、图标设计、商业插画、儿童插画、概念艺术、社交媒体配图、电商产品图、名片设计、活动海报、书籍封面
+- **动态参数系统**：每个设计角色配备专业参数（风格、构图、色调、材质等）
+- **智能系统提示词**：根据选择自动生成专业的系统提示词
 
-## ✨ 核心功能 | Core Features
+### 🤖 本地 AI 模型 (v5.0 新增)
+- **嵌入式推理**：内置 Qwen3-0.6B (GGUF) 文本生成 + Tiny-Toxic-Detector (ONNX) 安全检测
+- **三层智能降级**：外部 API → 本地模型 → 规则引擎，自动选择最优方案
+- **模型管理面板**：下载/加载/卸载/删除，SSE 实时进度条与内存监控
+- **空闲自动卸载**：30分钟无使用自动释放内存，可自定义超时
+- **错误自动恢复**：上下文损坏时自动重建，保障推理连续性
 
-### 🎨 设计助手 / Design Assistant
-- **16种专业设计角色 / 16 specialized roles**：Logo、促销/品牌海报、IP 角色、广告创意、包装、UI、图标、商业/儿童/概念插画、社交媒体、电商、名片、活动海报、书籍封面
-- **动态参数系统 / Dynamic parameters**：每个角色配备风格、构图、色调、材质等专业参数
-- **智能系统提示词 / Smart system prompts**：基于选择自动生成专业系统提示
+### 🛡️ 内容安全审查 (v5.0 新增)
+- **三层审查链**：关键词过滤 → AI 毒性检测 → 语义审查
+- **设计领域白名单**：避免 "nude tone"（裸色调）等专业术语误报
+- **可配置策略**：PASS / WARN / BLOCK 三级响应
 
-### 🧰 预设模板库 / Preset Library
-- **专业参数配置 / Pro parameter packs**：构图方式、相机角度、光影效果、输出精度等
-- **设计术语库 / Design terminology**：133+ 专业设计术语，涵盖构图、光影、色彩、材质等 13 个分类
-- **一键应用 / One-click apply**：选择设计角色后自动配置相关参数
+### 📋 预设模板库
+- **专业参数配置**：构图方式、相机角度、光影效果、输出精度等
+- **设计术语库**：133+ 专业设计术语，涵盖构图、光影、色彩、材质等13个分类
+- **一键应用**：选择设计角色后自动配置相关参数
 
-### 🧠 Agent Skills 系统 / Agent Skills
+### 🧠 Agent Skills 系统
 可复用的专业知识模块，让 AI 生成更专业的提示词：
 
 | Skill | 描述 |
@@ -42,65 +47,52 @@ PromptCraft is an intelligent prompt generator for designers and creators. It cr
 | 💼 品牌战略顾问 | 品牌定位和战略指导 |
 | 🇯🇵 日本传统色 | 188种日本传统颜色数据库 |
 
-### 📝 历史记录与收藏 / History & Favorites
-- **生成历史 / History**：自动保存提示词生成记录
-- **收藏管理 / Favorites**：一键收藏常用提示词
-- **快速复用 / Quick reuse**：从历史/收藏快速载入配置
+### 📝 历史记录与收藏
+- **生成历史**：自动保存提示词生成记录
+- **收藏管理**：一键收藏常用提示词
+- **快速复用**：从历史/收藏快速载入配置
 
-### 🔌 多模型支持 / Multi-Model Support
-- **云端服务 / Cloud APIs**：OpenAI、DeepSeek、智谱等兼容 OpenAI 格式的 API
-- **本地部署 / Local**：支持 Ollama 本地模型
+### 🔌 多模型支持
+- **云端服务**：OpenAI、DeepSeek、智谱等兼容 OpenAI 格式的 API
+- **本地部署**：支持 Ollama 本地模型
 
-### ✂️ 提示词压缩 / Prompt Compression
-- **三档压缩 / Three levels**：完整、精简、超轻量，覆盖 8K / 4K / 超轻量模型
-- **Token 估算 / Token estimation**：快速估算提示词长度，自动推荐压缩等级
-- **全链路集成 / End-to-end**：后端 API + 前端开关 + 统计信息
+## 🚀 快速启动
 
-## 🚀 快速启动 | Quick Start
-
-### 环境要求 / Requirements
+### 环境要求
 - Node.js >= 18.0.0
 - npm >= 9.0.0
 
-### 安装运行 / Install & Run
+### 安装运行
 
 ```bash
-# 克隆仓库 / Clone
-git clone https://github.com/yourusername/PromptCraft.git
-cd PromptCraft
+# 克隆仓库
+git clone https://github.com/yourusername/PromptAtelier.git
+cd PromptAtelier
 
-# 安装依赖 / Install dependencies
+# 安装依赖
 npm install
 
-# 启动服务 / Start server
+# 启动服务
 npm start
 
-# 访问应用 / Visit app
-# http://localhost:3000
+# 访问应用
+# 打开浏览器访问 http://localhost:3000
 ```
 
-### 运行测试 / Run Tests
+### 运行测试
 
 ```bash
 npm test
 ```
 
-## 📚 API 参考 | API Reference
+## 📚 API 参考
 
-### 设计提示词 | Design Prompts
+### 设计提示词
 | 端点 | 方法 | 描述 |
 |------|------|------|
 | `/api/prompts/design-presets` | GET | 获取所有预设模板 |
 | `/api/prompts/design-presets/:id/apply` | POST | 应用指定模板 |
 | `/api/prompts/improve/ai` | POST | AI 优化提示词 |
-
-### 提示词压缩 | Prompt Compression
-| 端点 | 方法 | 描述 |
-|------|------|------|
-| `/api/prompts/compress` | POST | 压缩提示词（完整/精简/超轻量） |
-| `/api/prompts/estimate-tokens` | POST | 估算提示词 Token 数 |
-| `/api/prompts/compression-levels` | GET | 获取压缩等级信息 |
-| `/api/prompts/recommend-compression` | POST | 根据 Token 推荐压缩等级 |
 
 ### Skills
 | 端点 | 方法 | 描述 |
@@ -108,34 +100,64 @@ npm test
 | `/api/skills` | GET | 获取所有 Skills |
 | `/api/skills/context` | POST | 获取匹配的 Skills 上下文 |
 
-### 历史与收藏 | History & Favorites
+### 历史与收藏
 | 端点 | 方法 | 描述 |
 |------|------|------|
 | `/api/history` | GET/POST/DELETE | 历史记录管理 |
 | `/api/favorites` | GET/POST/DELETE | 收藏管理 |
 
-## 📁 项目结构 | Project Structure
+### 模型管理 (v5.0 新增)
+| 端点 | 方法 | 描述 |
+|------|------|------|
+| `/api/models/status` | GET | 获取所有模型状态、内存、运行时 |
+| `/api/models/registry` | GET | 获取模型注册表 |
+| `/api/models/:id/download` | POST | 下载模型（SSE 进度） |
+| `/api/models/:id/load` | POST | 加载模型到内存 |
+| `/api/models/:id/unload` | POST | 卸载模型 |
+| `/api/models/:id` | DELETE | 删除模型文件 |
+| `/api/models/test/generate` | POST | 测试文本生成 |
+| `/api/models/test/classify` | POST | 测试毒性分类 |
+
+### 安全审查 (v5.0 新增)
+| 端点 | 方法 | 描述 |
+|------|------|------|
+| `/api/safety/check` | POST | 内容安全审查 |
+| `/api/safety/config` | GET/PUT | 安全配置管理 |
+| `/api/safety/stats` | GET | 审查统计数据 |
+
+## 📁 项目结构
 
 ```
-PromptCraft/
+PromptAtelier/
 ├── backend/              # 后端服务
 │   ├── server.js         # 主服务入口
 │   ├── routes/           # API 路由
 │   │   ├── prompts.js    # 提示词相关
+│   │   ├── models.js     # 模型管理 (v5.0)
+│   │   ├── safety.js     # 安全审查 (v5.0)
 │   │   ├── skills.js     # Skills 相关
 │   │   ├── history.js    # 历史记录
 │   │   └── favorites.js  # 收藏管理
 │   ├── services/         # 业务服务层
+│   │   ├── localModelManager.js  # 本地模型管理器 (v5.0)
+│   │   ├── llmService.js         # LLM 抽象层 (v5.0)
+│   │   ├── safetyService.js      # 安全审查服务 (v5.0)
+│   │   └── ...
+│   ├── middleware/        # 中间件
+│   │   └── safetyMiddleware.js   # 安全审查中间件 (v5.0)
 │   └── utils/            # 工具函数
 ├── frontend/             # 前端页面
-│   ├── index.html        # 主页面
+│   ├── index.html        # 主页面（含 AI 管理面板）
 │   ├── script.js         # 交互逻辑
 │   └── style.css         # 样式文件
+├── models/               # 本地 AI 模型 (v5.0)
+│   └── *.gguf            # GGUF 模型文件
 ├── skills/               # Agent Skills
 │   ├── index.json        # Skills 索引
 │   └── */SKILL.md        # Skill 定义文件
 ├── data/                 # 数据文件
 │   ├── presets.json      # 设计预设配置
+│   ├── safety-config.json # 安全审查配置 (v5.0)
 │   ├── professional-terms.json  # 专业术语库
 │   ├── categories.json   # 分类配置
 │   └── templates.json    # 模板配置
@@ -144,17 +166,47 @@ PromptCraft/
 └── rules/                # 开发规范
 ```
 
-## 🛠️ 技术栈 | Tech Stack
+## 🛠️ 技术栈
 
-- **后端 / Backend**：Node.js + Express
-- **前端 / Frontend**：原生 HTML/CSS/JS + Alpine.js + DaisyUI
-- **测试 / Testing**：Jest
-- **代码规范 / Linting**：ESLint
+- **后端**：Node.js + Express
+- **前端**：原生 HTML/CSS/JS + Alpine.js + DaisyUI
+- **本地 AI**：node-llama-cpp (GGUF) + @huggingface/transformers (ONNX)
+- **测试**：Jest + Supertest（500+ 测试用例）
+- **代码规范**：ESLint
+
+## � 文档
+
+- [Agent Skills 使用指南](docs/Agent_Skills使用指南.md)
+- [项目开发计划](docs/项目开发计划.md)
+- [快速开始指南](rules/快速开始指南.md)
+- [技术规范文档](rules/技术规范文档.md)
+
+## 🔄 更新日志
+
+### v5.0.0 (2026-02)
+- 🤖 **本地 AI 模型集成**：嵌入式 Qwen3-0.6B (GGUF) 文本生成，完全离线推理
+- 🛡️ **内容安全审查**：三层审查链 + Tiny-Toxic-Detector AI 检测
+- 🔄 **三层智能降级**：外部 API → 本地模型 → 规则引擎
+- 📦 **模型管理面板**：下载/加载/卸载/删除 + SSE 实时进度 + 内存监控
+- ⏱️ **空闲自动卸载**：30分钟无使用自动释放内存
+- 🔧 **错误自动恢复**：推理上下文损坏时自动重建
+- 📝 **提示词压缩**：自动压缩超长提示词适配本地小模型
+- 🧪 **500+ 自动化测试**：19 套件覆盖全部功能
+
+### v4.3.0 (2025-01)
+- ✨ 新增专业设计术语库（133+术语，13个分类）
+- 🎨 增强9个设计角色的专业参数配置
+- 📊 Logo设计专家：新增构图、设计形式、创意方向、输出精度等参数
+- 🎭 IP角色设计：新增角色风格、时代风格、中国风元素等参数
+
+### v4.2.0
+- 🧠 Agent Skills 系统上线
+- 📝 历史记录与收藏功能
+- 🎨 16种设计角色预设
 
 ## 🤖 自动化发布 | Automated Release
 
 本项目使用 [semantic-release](https://github.com/semantic-release/semantic-release) 实现全自动版本管理和发布：
-
 - ✅ 基于提交信息自动确定版本号（major/minor/patch）
 - ✅ 自动生成和更新 CHANGELOG.md
 - ✅ 自动创建 Git 标签
@@ -162,38 +214,7 @@ PromptCraft/
 
 **提交信息规范**：遵循 [Conventional Commits](https://www.conventionalcommits.org/) 规范
 
-```bash
-feat: 新功能 (minor version bump)
-fix: 修复 bug (patch version bump)
-feat!: 破坏性变更 (major version bump)
-docs: 文档更新 (patch version bump)
-chore: 其他变更 (no release)
-```
-
-详细说明请参考：[语义化发布配置文档](docs/SEMANTIC_RELEASE.md)
-
-## 📚 文档
-
-- [Agent Skills 使用指南](docs/Agent_Skills使用指南.md)
-- [项目开发计划](docs/项目开发计划.md)
-- [快速开始指南](rules/快速开始指南.md)
-- [技术规范文档](rules/技术规范文档.md)
-- [语义化发布配置](docs/SEMANTIC_RELEASE.md)
-
-## 🔄 更新日志 / Release Notes
-
-### v4.3.0 (2026-02)
-- ✂️ 提示词压缩服务（完整/精简/超轻量），新增 `/compress`、`/estimate-tokens`、`/compression-levels`、`/recommend-compression` 端点 / Prompt compression engine with three levels and new endpoints
-- 🖥️ 前端压缩控制：设置/生成界面提供压缩开关、等级选择与 Token 统计 / Frontend controls for compression with toggles, level picker, and token stats
-- 📚 133+ 设计专业术语库（13 类），预设升级至 `presets.json v2.1.0` / 133+ design terms across 13 categories; presets updated to v2.1.0
-- 🎨 9 个设计角色参数升级（Logo、IP 角色、UI、图标、商业/儿童/概念插画、社交媒体、书籍封面） / Nine design roles expanded with richer parameters
-
-### v4.2.0
-- 🧠 Agent Skills 系统上线（Logo 评审、色彩理论、品牌战略、日本传统色） / Agent Skills launched with four built-in experts
-- 📝 历史记录与收藏功能 / History and favorites introduced
-- 🎨 16 种设计角色预设 / 16 design role presets
-
-## 📄 许可证 | License
+## 📄 许可证
 
 本项目遵循 [MIT 许可证](LICENSE)。
 
@@ -203,6 +224,6 @@ chore: 其他变更 (no release)
 
 **如果这个项目对你有帮助，请给个 ⭐ Star 支持一下！**
 
-Made with ❤️ by PromptCraft Team
+Made with ❤️ by PromptAtelier Team
 
 </div>

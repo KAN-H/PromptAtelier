@@ -1,7 +1,7 @@
 {
-  "name": "promptcraft",
-  "version": "4.3.0",
-  "description": "智能提示词生成器 - 专业设计提示词工作台",
+  "name": "prompt-atelier",
+  "version": "6.0.0-alpha",
+  "description": "PromptAtelier - 智能提示词生成器 · 专业设计提示词工作台",
   "main": "backend/server.js",
   "bin": "backend/server.js",
   "scripts": {
@@ -17,7 +17,7 @@
     "generator",
     "mvp"
   ],
-  "author": "PromptCraft Team",
+  "author": "PromptAtelier Team",
   "license": "MIT",
   "dependencies": {
     "ajv": "^8.17.1",
@@ -27,13 +27,18 @@
     "js-yaml": "^4.1.1",
     "open": "8.4.2"
   },
+  "optionalDependencies": {
+    "@huggingface/transformers": "^3.4.0",
+    "node-llama-cpp": "^3.17.1"
+  },
   "devDependencies": {
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
     "jest": "^30.2.0",
     "nodemon": "^3.1.10",
     "pkg": "^5.8.1",
-    "semantic-release": "^24.2.0"
+    "semantic-release": "^24.2.0",
+    "supertest": "^7.2.2"
   },
   "pkg": {
     "assets": [
