@@ -94,6 +94,22 @@ app.listen(PORT, async () => {
   }
 });
 
+// 防御性处理：捕获可选原生模块（如 sharp）的异步未捕获异常
+// 这些模块在 import 时可能触发延迟的异步错误，不应导致整个服务崩溃
+process.on('uncaughtException', (err) => {
+  const isOptionalModuleError = err.message && (
+    err.message.includes('sharp') ||
+    err.message.includes('node-llama-cpp') ||
+    err.message.includes('onnxruntime')
+  );
+  if (isOptionalModuleError) {
+    console.warn('⚠️ 可选模块异步错误（已忽略，不影响核心功能）:', err.message);
+  } else {
+    console.error('💥 未捕获异常:', err);
+    process.exit(1);
+  }
+});
+
 // 优雅关闭（释放模型内存）
 const gracefulShutdown = async (signal) => {
   console.log(`\n${signal} 收到，正在优雅关闭...`);
