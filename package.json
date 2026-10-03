@@ -9,6 +9,7 @@
     "dev": "nodemon backend/server.js",
     "test": "jest",
     "test:watch": "jest --watch",
+    "check:repository": "node scripts/check-committed-artifacts.js",
     "build": "pkg . --out-path dist --targets node18-win-x64"
   },
   "keywords": [

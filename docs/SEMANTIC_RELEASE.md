@@ -234,4 +234,4 @@ git commit -m "chore: update dependencies [skip ci]"
 
 Version history and release notes are available in:
 - `CHANGELOG.md` - Generated automatically by semantic-release
-- [GitHub Releases](https://github.com/KAN-H/PromptCraft/releases) - Published automatically
+- [GitHub Releases](https://github.com/KAN-H/PromptAtelier/releases) - Published automatically

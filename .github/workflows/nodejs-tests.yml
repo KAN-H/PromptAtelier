@@ -25,6 +25,9 @@ jobs:
       - name: Install dependencies
         run: npm ci --omit=optional
 
+      - name: Check committed repository artifacts
+        run: npm run check:repository
+
       - name: Run tests
         run: npm test
 

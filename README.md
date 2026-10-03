@@ -66,7 +66,7 @@ PromptAtelier 是一个面向设计师和内容创作者的智能提示词生成
 
 ```bash
 # 克隆仓库
-git clone https://github.com/yourusername/PromptAtelier.git
+git clone https://github.com/KAN-H/PromptAtelier.git
 cd PromptAtelier
 
 # 安装依赖

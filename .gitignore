@@ -82,6 +82,8 @@ pids/
 *.pid
 *.seed
 *.pid.lock
+data/history.json
+data/favorites.json
 
 # Local AI Models (Phase 13 - v5.0)
 # Keep directory structure but ignore large model files

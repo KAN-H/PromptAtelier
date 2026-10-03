@@ -310,11 +310,11 @@ professional vector style, clean lines
 
 ## 📞 技术支持
 
-**项目地址**：`d:\Myapp\PromptAtelier`
+**项目地址**：`<install-path>/PromptAtelier`
 
 **服务器启动**：
 ```bash
-cd /d/Myapp/PromptAtelier
+cd /path/to/PromptAtelier
 node backend/server.js
 ```
 
