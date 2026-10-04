@@ -31,6 +31,9 @@ jobs:
       - name: Run tests
         run: npm test
 
+      - name: Smoke-test packaged application
+        run: npm run test:pkg-smoke
+
       - name: Start server test
         env:
           CI: true

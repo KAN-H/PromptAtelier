@@ -8,7 +8,8 @@
  * @author PromptAtelier Team
  */
 
-const fs = require('fs').promises;
+const fsSync = require('fs');
+const fs = fsSync.promises;
 const path = require('path');
 
 // Skills 根目录
@@ -53,14 +54,17 @@ class SkillService {
     if (this.initialized) return;
 
     try {
-      // 确保 skills 目录存在
-      await fs.mkdir(SKILLS_DIR, { recursive: true });
+      if (!process.pkg) {
+        await fs.mkdir(SKILLS_DIR, { recursive: true });
+      }
 
       // 加载或创建索引文件
       await this._loadOrCreateIndex();
 
       // 扫描并同步 skills
-      await this._syncSkills();
+      if (!process.pkg) {
+        await this._syncSkills();
+      }
 
       this.initialized = true;
       console.log(`[SkillService] 初始化完成，已加载 ${this.indexCache.skills.length} 个 Skills`);
@@ -75,7 +79,9 @@ class SkillService {
    */
   async _loadOrCreateIndex() {
     try {
-      const data = await fs.readFile(INDEX_FILE, 'utf-8');
+      const data = process.pkg
+        ? fsSync.readFileSync(INDEX_FILE, 'utf-8')
+        : await fs.readFile(INDEX_FILE, 'utf-8');
       this.indexCache = JSON.parse(data);
     } catch (error) {
       // 文件不存在，创建默认索引
@@ -290,7 +296,9 @@ class SkillService {
       const skillMdPath = path.join(skillDir, 'SKILL.md');
 
       // 读取完整内容
-      const content = await fs.readFile(skillMdPath, 'utf-8');
+      const content = process.pkg
+        ? fsSync.readFileSync(skillMdPath, 'utf-8')
+        : await fs.readFile(skillMdPath, 'utf-8');
       
       // 提取指令部分（frontmatter 之后的内容）
       const instructions = content.replace(/^---\n[\s\S]*?\n---\n*/, '').trim();

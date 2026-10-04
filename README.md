@@ -49,6 +49,8 @@ npm start
 
 For development with automatic server restarts, run `npm run dev`. To run the tests, use `npm test`.
 
+On Windows, `npm run build` creates a standalone executable under `dist/`. The packaged app stores history and favorites under `~/.promptatelier/data` (or the directory set in `PROMPTATELIER_DATA_DIR`).
+
 ## Use the application
 
 1. Open **Design** and select a design category or preset.

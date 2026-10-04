@@ -1,4 +1,5 @@
 const { spawnSync } = require('child_process');
+const fs = require('fs');
 
 const forbiddenPaths = [
   {
@@ -50,6 +51,14 @@ function findForbiddenPaths(paths) {
   });
 }
 
+function findDisallowedSkillIds(index) {
+  const parsed = typeof index === 'string' ? JSON.parse(index) : index;
+  const skills = parsed && Array.isArray(parsed.skills) ? parsed.skills : [];
+  return skills
+    .map(skill => skill && skill.id)
+    .filter(id => id && id !== 'nippon-colors');
+}
+
 function getTrackedPaths() {
   const result = spawnSync('git', ['ls-files', '-z'], { encoding: 'utf8' });
   if (result.error) throw result.error;
@@ -69,7 +78,18 @@ if (require.main === module) {
       }
       process.exitCode = 1;
     } else {
-      console.log('Tracked files comply with the public repository boundary.');
+      const skillIndexPath = 'skills/index.json';
+      if (getTrackedPaths().includes(skillIndexPath)) {
+        const disallowedIds = findDisallowedSkillIds(fs.readFileSync(skillIndexPath, 'utf8'));
+        if (disallowedIds.length > 0) {
+          console.error(`The Skills index contains non-approved IDs: ${disallowedIds.join(', ')}`);
+          process.exitCode = 1;
+        } else {
+          console.log('Tracked files comply with the public repository boundary.');
+        }
+      } else {
+        console.log('Tracked files comply with the public repository boundary.');
+      }
     }
   } catch (error) {
     console.error(`Unable to check tracked files: ${error.message}`);
@@ -77,4 +97,4 @@ if (require.main === module) {
   }
 }
 
-module.exports = { findForbiddenPaths };
+module.exports = { findDisallowedSkillIds, findForbiddenPaths };

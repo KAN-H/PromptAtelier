@@ -1,4 +1,7 @@
-const { findForbiddenPaths } = require('../../../scripts/check-committed-artifacts');
+const {
+  findDisallowedSkillIds,
+  findForbiddenPaths
+} = require('../../../scripts/check-committed-artifacts');
 
 describe('repository artifact boundary', () => {
   test('rejects private, generated, runtime, release, and experimental paths', () => {
@@ -34,5 +37,15 @@ describe('repository artifact boundary', () => {
       'skills/index.json',
       'skills/nippon-colors/SKILL.md'
     ])).toEqual([]);
+  });
+
+  test('rejects non-approved Skill IDs in the tracked index', () => {
+    expect(findDisallowedSkillIds({
+      skills: [
+        { id: 'nippon-colors' },
+        { id: 'logo-critique-expert' },
+        { id: 'color-theory-master' }
+      ]
+    })).toEqual(['logo-critique-expert', 'color-theory-master']);
   });
 });
