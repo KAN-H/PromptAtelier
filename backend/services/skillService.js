@@ -292,12 +292,12 @@ class SkillService {
     }
 
     const meta = this.indexCache.skills.find(s => s.id === skillId);
-    if (!meta) {
+    if (!meta || typeof meta.id !== 'string' || !SKILL_ID_PATTERN.test(meta.id)) {
       return null;
     }
 
     try {
-      const skillDir = path.join(SKILLS_DIR, skillId);
+      const skillDir = path.join(SKILLS_DIR, meta.id);
       const skillMdPath = path.join(skillDir, 'SKILL.md');
 
       // 读取完整内容
@@ -534,12 +534,18 @@ ${data.instructions || '# ' + data.name + '\n\n在此编写 Skill 指令...'}
     }
 
     const index = this.indexCache.skills.findIndex(s => s.id === skillId);
+
     if (index === -1) {
       return false;
     }
 
+    const skillIdFromIndex = this.indexCache.skills[index].id;
+    if (typeof skillIdFromIndex !== 'string' || !SKILL_ID_PATTERN.test(skillIdFromIndex)) {
+      return false;
+    }
+
     // 删除目录
-    const skillDir = path.join(SKILLS_DIR, skillId);
+    const skillDir = path.join(SKILLS_DIR, skillIdFromIndex);
     try {
       await fs.rm(skillDir, { recursive: true, force: true });
     } catch (error) {
@@ -581,7 +587,7 @@ ${data.instructions || '# ' + data.name + '\n\n在此编写 Skill 指令...'}
 
     // 重新生成 SKILL.md
     const skillMd = this._generateSkillMd({
-      id: skillId,
+      id: skill.meta.id,
       name,
       description,
       triggers,
@@ -590,7 +596,7 @@ ${data.instructions || '# ' + data.name + '\n\n在此编写 Skill 指令...'}
       instructions
     });
 
-    const skillMdPath = path.join(SKILLS_DIR, skillId, 'SKILL.md');
+    const skillMdPath = path.join(SKILLS_DIR, skill.meta.id, 'SKILL.md');
     await fs.writeFile(skillMdPath, skillMd, 'utf-8');
 
     // 更新索引
