@@ -1,229 +1,113 @@
 # PromptAtelier
 
-<div align="center">
+[![Node.js CI](https://github.com/KAN-H/PromptAtelier/actions/workflows/nodejs-tests.yml/badge.svg)](https://github.com/KAN-H/PromptAtelier/actions/workflows/nodejs-tests.yml)
+[![Node.js](https://img.shields.io/badge/Node.js-%3E%3D18-brightgreen)](https://nodejs.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Latest release](https://img.shields.io/github/v/release/KAN-H/PromptAtelier)](https://github.com/KAN-H/PromptAtelier/releases)
 
-**🎨 专业设计提示词生成器 | Professional Design Prompt Generator**
+**PromptAtelier is an open-source design prompt workbench for turning creative briefs into structured prompts.** It provides a browser-based interface, configurable design parameters, prompt history and favorites, and optional AI-assisted generation.
 
-[![Version](https://img.shields.io/badge/version-5.0.0-blue.svg)](PROGRESS.md)
-[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-[![Node](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)](package.json)
-[![Tests](https://img.shields.io/badge/tests-500%2B%20passed-brightgreen.svg)](package.json)
+PromptAtelier supports Chinese and English interfaces. Prompts can be generated in English from design requirements, then adapted for image-generation services such as Midjourney, DALL·E, Stable Diffusion, or Flux.
 
-</div>
+## Features
 
-PromptAtelier 是一个面向设计师和内容创作者的智能提示词生成器，专注于生成用于图像生成模型（如 Midjourney、DALL-E、Stable Diffusion、Flux 等）的专业提示词。支持中文输入，自动输出英文提示词。**v5.0 新增本地 AI 模型推理、内容安全审查和离线模式**。
+- Design prompt workflows with selectable categories, presets, styles, composition, colors, materials, and other parameters.
+- Optional AI-assisted prompt improvement through OpenAI-compatible providers, including OpenAI, DeepSeek, Groq, SiliconFlow, OpenRouter, and compatible local services such as Ollama or LM Studio.
+- Optional local model support for GGUF and ONNX models. Model dependencies are optional; the basic web application can run without them.
+- Prompt history and favorites, stored in local JSON files.
+- A Skills view with the built-in `nippon-colors` reference for Japanese traditional colors. Matching enabled Skills can provide additional context during prompt generation.
+- Dynamic design workflows, safety checks, and prompt compression controls.
+- JSON Schemas and examples for supported image and video prompt data: [`schemas/`](schemas/) and [`examples/`](examples/).
 
-## ✨ 核心功能
+## Requirements
 
-### 🎨 设计助手
-- **16种专业设计角色**：Logo设计、促销海报、品牌海报、IP角色、广告创意、包装设计、UI界面、图标设计、商业插画、儿童插画、概念艺术、社交媒体配图、电商产品图、名片设计、活动海报、书籍封面
-- **动态参数系统**：每个设计角色配备专业参数（风格、构图、色调、材质等）
-- **智能系统提示词**：根据选择自动生成专业的系统提示词
+- Node.js 18 or later
+- npm 8 or later
+- Internet access for CDN-hosted frontend libraries and cloud AI providers; local AI providers can run on your own machine.
 
-### 🤖 本地 AI 模型 (v5.0 新增)
-- **嵌入式推理**：内置 Qwen3-0.6B (GGUF) 文本生成 + Tiny-Toxic-Detector (ONNX) 安全检测
-- **三层智能降级**：外部 API → 本地模型 → 规则引擎，自动选择最优方案
-- **模型管理面板**：下载/加载/卸载/删除，SSE 实时进度条与内存监控
-- **空闲自动卸载**：30分钟无使用自动释放内存，可自定义超时
-- **错误自动恢复**：上下文损坏时自动重建，保障推理连续性
-
-### 🛡️ 内容安全审查 (v5.0 新增)
-- **三层审查链**：关键词过滤 → AI 毒性检测 → 语义审查
-- **设计领域白名单**：避免 "nude tone"（裸色调）等专业术语误报
-- **可配置策略**：PASS / WARN / BLOCK 三级响应
-
-### 📋 预设模板库
-- **专业参数配置**：构图方式、相机角度、光影效果、输出精度等
-- **设计术语库**：133+ 专业设计术语，涵盖构图、光影、色彩、材质等13个分类
-- **一键应用**：选择设计角色后自动配置相关参数
-
-### 🧠 Agent Skills 系统
-可复用的专业知识模块，让 AI 生成更专业的提示词：
-
-| Skill | 描述 |
-|-------|------|
-| 🎯 Logo 评审专家 | 专业分析和评估 Logo 设计 |
-| 🎨 色彩理论大师 | 专业的色彩搭配和色彩心理学 |
-| 💼 品牌战略顾问 | 品牌定位和战略指导 |
-| 🇯🇵 日本传统色 | 188种日本传统颜色数据库 |
-
-### 📝 历史记录与收藏
-- **生成历史**：自动保存提示词生成记录
-- **收藏管理**：一键收藏常用提示词
-- **快速复用**：从历史/收藏快速载入配置
-
-### 🔌 多模型支持
-- **云端服务**：OpenAI、DeepSeek、智谱等兼容 OpenAI 格式的 API
-- **本地部署**：支持 Ollama 本地模型
-
-## 🚀 快速启动
-
-### 环境要求
-- Node.js >= 18.0.0
-- npm >= 9.0.0
-
-### 安装运行
+## Install and run
 
 ```bash
-# 克隆仓库
-git clone https://github.com/yourusername/PromptAtelier.git
+git clone https://github.com/KAN-H/PromptAtelier.git
 cd PromptAtelier
-
-# 安装依赖
 npm install
-
-# 启动服务
 npm start
-
-# 访问应用
-# 打开浏览器访问 http://localhost:3000
 ```
 
-### 运行测试
+Open <http://localhost:3000>. To use a different port, set `PORT` before starting the server:
 
 ```bash
-npm test
+PORT=3100 npm start
 ```
 
-## 📚 API 参考
+On Windows PowerShell:
 
-### 设计提示词
-| 端点 | 方法 | 描述 |
-|------|------|------|
-| `/api/prompts/design-presets` | GET | 获取所有预设模板 |
-| `/api/prompts/design-presets/:id/apply` | POST | 应用指定模板 |
-| `/api/prompts/improve/ai` | POST | AI 优化提示词 |
-
-### Skills
-| 端点 | 方法 | 描述 |
-|------|------|------|
-| `/api/skills` | GET | 获取所有 Skills |
-| `/api/skills/context` | POST | 获取匹配的 Skills 上下文 |
-
-### 历史与收藏
-| 端点 | 方法 | 描述 |
-|------|------|------|
-| `/api/history` | GET/POST/DELETE | 历史记录管理 |
-| `/api/favorites` | GET/POST/DELETE | 收藏管理 |
-
-### 模型管理 (v5.0 新增)
-| 端点 | 方法 | 描述 |
-|------|------|------|
-| `/api/models/status` | GET | 获取所有模型状态、内存、运行时 |
-| `/api/models/registry` | GET | 获取模型注册表 |
-| `/api/models/:id/download` | POST | 下载模型（SSE 进度） |
-| `/api/models/:id/load` | POST | 加载模型到内存 |
-| `/api/models/:id/unload` | POST | 卸载模型 |
-| `/api/models/:id` | DELETE | 删除模型文件 |
-| `/api/models/test/generate` | POST | 测试文本生成 |
-| `/api/models/test/classify` | POST | 测试毒性分类 |
-
-### 安全审查 (v5.0 新增)
-| 端点 | 方法 | 描述 |
-|------|------|------|
-| `/api/safety/check` | POST | 内容安全审查 |
-| `/api/safety/config` | GET/PUT | 安全配置管理 |
-| `/api/safety/stats` | GET | 审查统计数据 |
-
-## 📁 项目结构
-
-```
-PromptAtelier/
-├── backend/              # 后端服务
-│   ├── server.js         # 主服务入口
-│   ├── routes/           # API 路由
-│   │   ├── prompts.js    # 提示词相关
-│   │   ├── models.js     # 模型管理 (v5.0)
-│   │   ├── safety.js     # 安全审查 (v5.0)
-│   │   ├── skills.js     # Skills 相关
-│   │   ├── history.js    # 历史记录
-│   │   └── favorites.js  # 收藏管理
-│   ├── services/         # 业务服务层
-│   │   ├── localModelManager.js  # 本地模型管理器 (v5.0)
-│   │   ├── llmService.js         # LLM 抽象层 (v5.0)
-│   │   ├── safetyService.js      # 安全审查服务 (v5.0)
-│   │   └── ...
-│   ├── middleware/        # 中间件
-│   │   └── safetyMiddleware.js   # 安全审查中间件 (v5.0)
-│   └── utils/            # 工具函数
-├── frontend/             # 前端页面
-│   ├── index.html        # 主页面（含 AI 管理面板）
-│   ├── script.js         # 交互逻辑
-│   └── style.css         # 样式文件
-├── models/               # 本地 AI 模型 (v5.0)
-│   └── *.gguf            # GGUF 模型文件
-├── skills/               # Agent Skills
-│   ├── index.json        # Skills 索引
-│   └── */SKILL.md        # Skill 定义文件
-├── data/                 # 数据文件
-│   ├── presets.json      # 设计预设配置
-│   ├── safety-config.json # 安全审查配置 (v5.0)
-│   ├── professional-terms.json  # 专业术语库
-│   ├── categories.json   # 分类配置
-│   └── templates.json    # 模板配置
-├── schemas/              # Schema 定义
-├── docs/                 # 项目文档
-└── rules/                # 开发规范
+```powershell
+$env:PORT = 3100
+npm start
 ```
 
-## 🛠️ 技术栈
+For development with automatic server restarts, run `npm run dev`. To run the tests, use `npm test`.
 
-- **后端**：Node.js + Express
-- **前端**：原生 HTML/CSS/JS + Alpine.js + DaisyUI
-- **本地 AI**：node-llama-cpp (GGUF) + @huggingface/transformers (ONNX)
-- **测试**：Jest + Supertest（500+ 测试用例）
-- **代码规范**：ESLint
+## Use the application
 
-## � 文档
+1. Open **Design** and select a design category or preset.
+2. Describe the subject and adjust the available style and output parameters.
+3. To use an AI provider, open settings, choose a provider, and enter its API endpoint, model, and key as applicable. Settings are stored in the browser. Local providers that do not require a key can be configured there as well.
+4. Generate a prompt. Enable the built-in `nippon-colors` Skill in **Skills** to make its reference information available when relevant.
+5. Review and reuse earlier results from **History** or **Favorites**.
 
-- [Agent Skills 使用指南](docs/Agent_Skills使用指南.md)
-- [项目开发计划](docs/项目开发计划.md)
-- [快速开始指南](rules/快速开始指南.md)
-- [技术规范文档](rules/技术规范文档.md)
+Cloud-provider API usage may incur charges under that provider's terms. Do not share or commit API keys.
 
-## 🔄 更新日志
+## Local models
 
-### v5.0.0 (2026-02)
-- 🤖 **本地 AI 模型集成**：嵌入式 Qwen3-0.6B (GGUF) 文本生成，完全离线推理
-- 🛡️ **内容安全审查**：三层审查链 + Tiny-Toxic-Detector AI 检测
-- 🔄 **三层智能降级**：外部 API → 本地模型 → 规则引擎
-- 📦 **模型管理面板**：下载/加载/卸载/删除 + SSE 实时进度 + 内存监控
-- ⏱️ **空闲自动卸载**：30分钟无使用自动释放内存
-- 🔧 **错误自动恢复**：推理上下文损坏时自动重建
-- 📝 **提示词压缩**：自动压缩超长提示词适配本地小模型
-- 🧪 **500+ 自动化测试**：19 套件覆盖全部功能
+The application includes a model-management view. GGUF and ONNX runtime packages are declared as optional dependencies and may require platform-specific native support. Use the model view to inspect available model options and download or manage model files. Local model inference can require substantial memory and disk space; it is not required for the standard prompt-generation workflow.
 
-### v4.3.0 (2025-01)
-- ✨ 新增专业设计术语库（133+术语，13个分类）
-- 🎨 增强9个设计角色的专业参数配置
-- 📊 Logo设计专家：新增构图、设计形式、创意方向、输出精度等参数
-- 🎭 IP角色设计：新增角色风格、时代风格、中国风元素等参数
+## Configuration and deployment
 
-### v4.2.0
-- 🧠 Agent Skills 系统上线
-- 📝 历史记录与收藏功能
-- 🎨 16种设计角色预设
+The server listens on `PORT` (default `3000`) and serves both the browser application and API from the same process. For a private deployment, run `npm start` under your chosen process manager and optionally place a reverse proxy in front of it. Configure the proxy to forward requests to the application port; the repository does not include a process-manager or reverse-proxy configuration.
 
-## 🤖 自动化发布 | Automated Release
+The `/health` endpoint returns basic server status:
 
-本项目使用 [semantic-release](https://github.com/semantic-release/semantic-release) 实现全自动版本管理和发布：
-- ✅ 基于提交信息自动确定版本号（major/minor/patch）
-- ✅ 自动生成和更新 CHANGELOG.md
-- ✅ 自动创建 Git 标签
-- ✅ 自动发布 GitHub Releases
+```bash
+curl http://localhost:3000/health
+```
 
-**提交信息规范**：遵循 [Conventional Commits](https://www.conventionalcommits.org/) 规范
+History and favorites are stored in `data/history.json` and `data/favorites.json`, which are created when the application starts. These files are local runtime data and are excluded from version control. Back them up separately if you need to preserve user records.
 
-## 📄 许可证
+## Troubleshooting
 
-本项目遵循 [MIT 许可证](LICENSE)。
+- **The server does not start:** check `node --version`, run `npm install`, and verify that the selected port is available. Set another `PORT` if needed.
+- **The page or its styles do not load:** check the server URL and browser network access. Several frontend libraries are loaded from public CDNs.
+- **AI requests fail:** verify the selected provider, endpoint, model name, and credentials in the application settings, and confirm that the provider is reachable.
+- **A local model cannot load:** confirm that optional runtime dependencies are compatible with your OS and Node.js version, that the model download completed, and that enough memory is available. The main application can still run without local model support.
+- **History or favorites are missing:** check that the server process can write to `data/` and that the local runtime JSON files are present.
 
----
+## Project structure
 
-<div align="center">
+| Path | Purpose |
+| --- | --- |
+| `backend/` | Express server, API routes, and services |
+| `frontend/` | Browser UI, localization, and static assets |
+| `data/` | Public presets, categories, templates, and safety configuration; runtime history/favorites are local |
+| `skills/nippon-colors/` | Built-in Japanese traditional color reference |
+| `schemas/`, `examples/` | Supported prompt data schemas and examples |
+| `models/` | Local model storage location |
 
-**如果这个项目对你有帮助，请给个 ⭐ Star 支持一下！**
+## Technology
 
-Made with ❤️ by PromptAtelier Team
+- **Server:** Node.js and Express, with CORS and response compression.
+- **Frontend:** HTML, CSS, and JavaScript, with Alpine.js, Tailwind CSS, DaisyUI, and Chart.js.
+- **Validation and Skills metadata:** Ajv and js-yaml.
+- **Optional local inference:** `node-llama-cpp` and `@huggingface/transformers`.
+- **Tests:** Jest and Supertest.
 
-</div>
+Direct Node.js dependencies: [Express](https://www.npmjs.com/package/express), [CORS](https://www.npmjs.com/package/cors), [compression](https://www.npmjs.com/package/compression), [Ajv](https://www.npmjs.com/package/ajv), [js-yaml](https://www.npmjs.com/package/js-yaml), and [open](https://www.npmjs.com/package/open). Optional inference dependencies are [node-llama-cpp](https://www.npmjs.com/package/node-llama-cpp) and [@huggingface/transformers](https://www.npmjs.com/package/@huggingface/transformers).
+
+## Version history
+
+See [GitHub Releases](https://github.com/KAN-H/PromptAtelier/releases).
+
+## License
+
+PromptAtelier is released under the [MIT License](LICENSE).
