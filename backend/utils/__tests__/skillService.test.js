@@ -77,6 +77,11 @@ describe('SkillService', () => {
       const skill = await skillService.getSkill('non-existent-skill');
       expect(skill).toBeNull();
     });
+
+    test('路径穿越 Skill ID 应该返回 null', async () => {
+      const skill = await skillService.getSkill('../../package.json');
+      expect(skill).toBeNull();
+    });
   });
 
   describe('matchSkills', () => {
@@ -231,6 +236,11 @@ describe('SkillService', () => {
 
     test('删除不存在的 Skill 应该返回 false', async () => {
       const success = await skillService.deleteSkill('non-existent-skill');
+      expect(success).toBe(false);
+    });
+
+    test('路径穿越 Skill ID 不应删除文件', async () => {
+      const success = await skillService.deleteSkill('../../package.json');
       expect(success).toBe(false);
     });
   });

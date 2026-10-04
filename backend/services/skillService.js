@@ -15,6 +15,7 @@ const path = require('path');
 // Skills 根目录
 const SKILLS_DIR = path.join(__dirname, '../../skills');
 const INDEX_FILE = path.join(SKILLS_DIR, 'index.json');
+const SKILL_ID_PATTERN = /^[a-z0-9-]+$/;
 
 /**
  * Skill 元数据结构
@@ -281,6 +282,10 @@ class SkillService {
   async getSkill(skillId) {
     await this.initialize();
 
+    if (typeof skillId !== 'string' || !SKILL_ID_PATTERN.test(skillId)) {
+      return null;
+    }
+
     // 检查缓存
     if (this.skillsCache.has(skillId)) {
       return this.skillsCache.get(skillId);
@@ -441,7 +446,7 @@ class SkillService {
     } = skillData;
 
     // 验证 ID
-    if (!id || !/^[a-z0-9-]+$/.test(id)) {
+    if (!id || !SKILL_ID_PATTERN.test(id)) {
       throw new Error('Skill ID 必须是小写字母、数字和连字符');
     }
 
@@ -523,6 +528,10 @@ ${data.instructions || '# ' + data.name + '\n\n在此编写 Skill 指令...'}
    */
   async deleteSkill(skillId) {
     await this.initialize();
+
+    if (typeof skillId !== 'string' || !SKILL_ID_PATTERN.test(skillId)) {
+      return false;
+    }
 
     const index = this.indexCache.skills.findIndex(s => s.id === skillId);
     if (index === -1) {
