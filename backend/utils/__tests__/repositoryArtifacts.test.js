@@ -13,7 +13,7 @@ describe('repository artifact boundary', () => {
       'data/history.json',
       'models/qwen3-0.6b.gguf',
       'skills/logo-critique-expert/SKILL.md',
-      '.github/workflows/release.yml'
+      'CHANGELOG.md'
     ]);
 
     expect(violations.map(({ filePath }) => filePath)).toEqual([
@@ -24,7 +24,7 @@ describe('repository artifact boundary', () => {
       'data/history.json',
       'models/qwen3-0.6b.gguf',
       'skills/logo-critique-expert/SKILL.md',
-      '.github/workflows/release.yml'
+      'CHANGELOG.md'
     ]);
   });
 
@@ -34,6 +34,8 @@ describe('repository artifact boundary', () => {
       '.github/workflows/nodejs-tests.yml',
       'schemas/image_prompt_schema.json',
       'examples/image_prompt_example.json',
+      '.releaserc.json',
+      '.github/workflows/release.yml',
       'skills/index.json',
       'skills/nippon-colors/SKILL.md'
     ])).toEqual([]);

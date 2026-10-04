@@ -39,8 +39,8 @@ const forbiddenPaths = [
     reason: 'experimental Skill excluded from the public snapshot'
   },
   {
-    pattern: /^(?:\.releaserc\.json|\.github\/workflows\/release\.yml|CHANGELOG\.md)$/i,
-    reason: 'removed release automation or generated changelog'
+    pattern: /^CHANGELOG\.md$/i,
+    reason: 'generated changelog is maintained in GitHub Releases'
   }
 ];
 

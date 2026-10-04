@@ -69,6 +69,7 @@ __pycache__/
 package-lock.json.old
 yarn.lock.old
 .npm/
+.npm-cache-pr1/
 .yarn-integrity
 
 # Binary outputs
@@ -116,11 +117,6 @@ graphify-out/
 /skills/brand-strategy-advisor/
 /skills/color-theory-master/
 /skills/logo-critique-expert/
-
-# Public release automation is maintained outside this repository snapshot
-/.releaserc.json
-/.github/workflows/release.yml
-/CHANGELOG.md
 
 # Local AI Models (Phase 13 - v5.0)
 # Keep directory structure but ignore large model files
