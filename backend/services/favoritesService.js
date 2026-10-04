@@ -4,13 +4,13 @@
  */
 
 const fs = require('fs');
-const path = require('path');
 const crypto = require('crypto');
 const historyService = require('./historyService');
+const runtimeDataPath = require('../utils/runtimeDataPath');
 
 const uuidv4 = () => crypto.randomUUID();
 
-const FAVORITES_FILE = path.join(__dirname, '../../data/favorites.json');
+const FAVORITES_FILE = runtimeDataPath('favorites.json');
 
 class FavoritesService {
   constructor() {

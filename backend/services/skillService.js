@@ -8,12 +8,14 @@
  * @author PromptAtelier Team
  */
 
-const fs = require('fs').promises;
+const fsSync = require('fs');
+const fs = fsSync.promises;
 const path = require('path');
 
 // Skills 根目录
 const SKILLS_DIR = path.join(__dirname, '../../skills');
 const INDEX_FILE = path.join(SKILLS_DIR, 'index.json');
+const SKILL_ID_PATTERN = /^[a-z0-9-]+$/;
 
 /**
  * Skill 元数据结构
@@ -53,14 +55,17 @@ class SkillService {
     if (this.initialized) return;
 
     try {
-      // 确保 skills 目录存在
-      await fs.mkdir(SKILLS_DIR, { recursive: true });
+      if (!process.pkg) {
+        await fs.mkdir(SKILLS_DIR, { recursive: true });
+      }
 
       // 加载或创建索引文件
       await this._loadOrCreateIndex();
 
       // 扫描并同步 skills
-      await this._syncSkills();
+      if (!process.pkg) {
+        await this._syncSkills();
+      }
 
       this.initialized = true;
       console.log(`[SkillService] 初始化完成，已加载 ${this.indexCache.skills.length} 个 Skills`);
@@ -75,7 +80,9 @@ class SkillService {
    */
   async _loadOrCreateIndex() {
     try {
-      const data = await fs.readFile(INDEX_FILE, 'utf-8');
+      const data = process.pkg
+        ? fsSync.readFileSync(INDEX_FILE, 'utf-8')
+        : await fs.readFile(INDEX_FILE, 'utf-8');
       this.indexCache = JSON.parse(data);
     } catch (error) {
       // 文件不存在，创建默认索引
@@ -275,22 +282,28 @@ class SkillService {
   async getSkill(skillId) {
     await this.initialize();
 
+    if (typeof skillId !== 'string' || !SKILL_ID_PATTERN.test(skillId)) {
+      return null;
+    }
+
     // 检查缓存
     if (this.skillsCache.has(skillId)) {
       return this.skillsCache.get(skillId);
     }
 
     const meta = this.indexCache.skills.find(s => s.id === skillId);
-    if (!meta) {
+    if (!meta || typeof meta.id !== 'string' || !SKILL_ID_PATTERN.test(meta.id)) {
       return null;
     }
 
     try {
-      const skillDir = path.join(SKILLS_DIR, skillId);
+      const skillDir = path.join(SKILLS_DIR, meta.id);
       const skillMdPath = path.join(skillDir, 'SKILL.md');
 
       // 读取完整内容
-      const content = await fs.readFile(skillMdPath, 'utf-8');
+      const content = process.pkg
+        ? fsSync.readFileSync(skillMdPath, 'utf-8')
+        : await fs.readFile(skillMdPath, 'utf-8');
       
       // 提取指令部分（frontmatter 之后的内容）
       const instructions = content.replace(/^---\n[\s\S]*?\n---\n*/, '').trim();
@@ -433,7 +446,7 @@ class SkillService {
     } = skillData;
 
     // 验证 ID
-    if (!id || !/^[a-z0-9-]+$/.test(id)) {
+    if (!id || !SKILL_ID_PATTERN.test(id)) {
       throw new Error('Skill ID 必须是小写字母、数字和连字符');
     }
 
@@ -516,13 +529,23 @@ ${data.instructions || '# ' + data.name + '\n\n在此编写 Skill 指令...'}
   async deleteSkill(skillId) {
     await this.initialize();
 
+    if (typeof skillId !== 'string' || !SKILL_ID_PATTERN.test(skillId)) {
+      return false;
+    }
+
     const index = this.indexCache.skills.findIndex(s => s.id === skillId);
+
     if (index === -1) {
       return false;
     }
 
+    const skillIdFromIndex = this.indexCache.skills[index].id;
+    if (typeof skillIdFromIndex !== 'string' || !SKILL_ID_PATTERN.test(skillIdFromIndex)) {
+      return false;
+    }
+
     // 删除目录
-    const skillDir = path.join(SKILLS_DIR, skillId);
+    const skillDir = path.join(SKILLS_DIR, skillIdFromIndex);
     try {
       await fs.rm(skillDir, { recursive: true, force: true });
     } catch (error) {
@@ -564,7 +587,7 @@ ${data.instructions || '# ' + data.name + '\n\n在此编写 Skill 指令...'}
 
     // 重新生成 SKILL.md
     const skillMd = this._generateSkillMd({
-      id: skillId,
+      id: skill.meta.id,
       name,
       description,
       triggers,
@@ -573,7 +596,7 @@ ${data.instructions || '# ' + data.name + '\n\n在此编写 Skill 指令...'}
       instructions
     });
 
-    const skillMdPath = path.join(SKILLS_DIR, skillId, 'SKILL.md');
+    const skillMdPath = path.join(SKILLS_DIR, skill.meta.id, 'SKILL.md');
     await fs.writeFile(skillMdPath, skillMd, 'utf-8');
 
     // 更新索引
