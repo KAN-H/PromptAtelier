@@ -25,8 +25,14 @@ jobs:
       - name: Install dependencies
         run: npm ci --omit=optional
 
+      - name: Check committed artifacts
+        run: npm run check:repository
+
       - name: Run tests
         run: npm test
+
+      - name: Smoke-test packaged application
+        run: npm run test:pkg-smoke
 
       - name: Start server test
         env:

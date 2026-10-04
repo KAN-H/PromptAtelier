@@ -11,23 +11,11 @@ const path = require('path');
 // 测试用 Skill ID
 const TEST_SKILL_ID = 'test-skill-unit-test';
 
-// 需要测试的内置 Skills
-const BUILT_IN_SKILLS = ['logo-critique-expert', 'color-theory-master', 'brand-strategy-advisor'];
-
 describe('SkillService', () => {
   
   beforeAll(async () => {
     // 初始化服务
     await skillService.initialize();
-    
-    // 启用测试需要的 Skills
-    for (const skillId of BUILT_IN_SKILLS) {
-      try {
-        await skillService.setSkillEnabled(skillId, true);
-      } catch (e) {
-        // 忽略错误
-      }
-    }
   });
 
   afterAll(async () => {
@@ -36,15 +24,6 @@ describe('SkillService', () => {
       await skillService.deleteSkill(TEST_SKILL_ID);
     } catch (e) {
       // 忽略删除失败
-    }
-    
-    // 恢复 Skills 为禁用状态
-    for (const skillId of BUILT_IN_SKILLS) {
-      try {
-        await skillService.setSkillEnabled(skillId, false);
-      } catch (e) {
-        // 忽略错误
-      }
     }
   });
 
@@ -63,18 +42,15 @@ describe('SkillService', () => {
     test('应该返回预置的 Skills', async () => {
       const skills = await skillService.listSkills();
       
-      // 检查是否包含预置 Skills
+      // The public repository currently includes only the NipponColors Skill.
       const skillIds = skills.map(s => s.id);
-      expect(skillIds).toContain('logo-critique-expert');
-      expect(skillIds).toContain('color-theory-master');
-      expect(skillIds).toContain('brand-strategy-advisor');
+      expect(skillIds).toEqual(['nippon-colors']);
     });
 
     test('应该能够按标签筛选', async () => {
-      const skills = await skillService.listSkills({ tags: ['logo'] });
+      const skills = await skillService.listSkills({ tags: ['色彩'] });
       
-      // 至少有一个包含 logo 标签的 Skill
-      expect(skills.some(s => s.tags.includes('logo'))).toBe(true);
+      expect(skills.some(s => s.tags.includes('色彩'))).toBe(true);
     });
 
     test('应该能够只返回启用的 Skills', async () => {
@@ -87,12 +63,12 @@ describe('SkillService', () => {
 
   describe('getSkill', () => {
     test('应该返回完整的 Skill 信息', async () => {
-      const skill = await skillService.getSkill('logo-critique-expert');
+      const skill = await skillService.getSkill('nippon-colors');
       
       expect(skill).not.toBeNull();
       expect(skill.meta).toBeDefined();
-      expect(skill.meta.id).toBe('logo-critique-expert');
-      expect(skill.meta.name).toBe('Logo 评审专家');
+      expect(skill.meta.id).toBe('nippon-colors');
+      expect(skill.meta.name).toBe('NipponColors');
       expect(skill.instructions).toBeDefined();
       expect(skill.instructions.length).toBeGreaterThan(0);
     });
@@ -101,28 +77,32 @@ describe('SkillService', () => {
       const skill = await skillService.getSkill('non-existent-skill');
       expect(skill).toBeNull();
     });
+
+    test('路径穿越 Skill ID 应该返回 null', async () => {
+      const skill = await skillService.getSkill('../../package.json');
+      expect(skill).toBeNull();
+    });
   });
 
   describe('matchSkills', () => {
     test('应该根据关键词匹配 Skills', async () => {
-      const matches = await skillService.matchSkills('logo设计评审');
+      const matches = await skillService.matchSkills('日本传统色设计');
       
       expect(matches.length).toBeGreaterThan(0);
-      expect(matches[0].id).toBe('logo-critique-expert');
+      expect(matches[0].id).toBe('nippon-colors');
     });
 
-    test('应该根据配色关键词匹配 color-theory-master', async () => {
-      const matches = await skillService.matchSkills('帮我做一个配色方案');
+    test('应该根据配色关键词匹配 NipponColors', async () => {
+      const matches = await skillService.matchSkills('帮我做一个日本传统色配色方案');
       
       expect(matches.length).toBeGreaterThan(0);
-      expect(matches.some(s => s.id === 'color-theory-master')).toBe(true);
+      expect(matches.some(s => s.id === 'nippon-colors')).toBe(true);
     });
 
-    test('应该根据品牌关键词匹配 brand-strategy-advisor', async () => {
+    test('disallowed experimental Skills are not matched', async () => {
       const matches = await skillService.matchSkills('品牌定位和目标受众分析');
       
-      expect(matches.length).toBeGreaterThan(0);
-      expect(matches.some(s => s.id === 'brand-strategy-advisor')).toBe(true);
+      expect(matches).toEqual([]);
     });
 
     test('无关输入应该返回空数组', async () => {
@@ -214,12 +194,12 @@ describe('SkillService', () => {
 
   describe('exportSkill / importSkill', () => {
     test('应该成功导出 Skill', async () => {
-      const exported = await skillService.exportSkill('logo-critique-expert');
+      const exported = await skillService.exportSkill('nippon-colors');
       
       expect(exported).not.toBeNull();
       expect(exported.exportVersion).toBe('1.0');
       expect(exported.skill).toBeDefined();
-      expect(exported.skill.id).toBe('logo-critique-expert');
+      expect(exported.skill.id).toBe('nippon-colors');
       expect(exported.skill.instructions).toBeDefined();
     });
 
@@ -231,10 +211,10 @@ describe('SkillService', () => {
 
   describe('buildSkillsContext', () => {
     test('应该为相关输入构建上下文', async () => {
-      const context = await skillService.buildSkillsContext('帮我评审一下这个logo设计');
+      const context = await skillService.buildSkillsContext('我需要日本传统色配色');
       
       expect(context.length).toBeGreaterThan(0);
-      expect(context).toContain('Logo 评审专家');
+      expect(context).toContain('NipponColors');
     });
 
     test('无关输入可能返回空上下文', async () => {
@@ -258,6 +238,11 @@ describe('SkillService', () => {
       const success = await skillService.deleteSkill('non-existent-skill');
       expect(success).toBe(false);
     });
+
+    test('路径穿越 Skill ID 不应删除文件', async () => {
+      const success = await skillService.deleteSkill('../../package.json');
+      expect(success).toBe(false);
+    });
   });
 
   describe('rescan', () => {
@@ -265,7 +250,7 @@ describe('SkillService', () => {
       const skills = await skillService.rescan();
       
       expect(Array.isArray(skills)).toBe(true);
-      expect(skills.length).toBeGreaterThanOrEqual(3); // 至少有 3 个预置 Skills
+      expect(skills.map(skill => skill.id)).toEqual(['nippon-colors']);
     });
   });
 });

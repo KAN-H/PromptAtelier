@@ -4,12 +4,12 @@
  */
 
 const fs = require('fs');
-const path = require('path');
 const crypto = require('crypto');
+const runtimeDataPath = require('../utils/runtimeDataPath');
 
 const uuidv4 = () => crypto.randomUUID();
 
-const HISTORY_FILE = path.join(__dirname, '../../data/history.json');
+const HISTORY_FILE = runtimeDataPath('history.json');
 const DEFAULT_MAX_RECORDS = 100;
 
 class HistoryService {

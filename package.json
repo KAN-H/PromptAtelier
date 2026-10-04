@@ -2,6 +2,7 @@
   "name": "prompt-atelier",
   "version": "6.0.0-alpha",
   "description": "PromptAtelier - 智能提示词生成器 · 专业设计提示词工作台",
+  "private": true,
   "main": "backend/server.js",
   "bin": "backend/server.js",
   "scripts": {
@@ -9,7 +10,9 @@
     "dev": "nodemon backend/server.js",
     "test": "jest",
     "test:watch": "jest --watch",
-    "build": "pkg . --out-path dist --targets node18-win-x64"
+    "build": "pkg . --out-path dist --targets node18-win-x64",
+    "test:pkg-smoke": "pkg . --out-path dist/pkg-smoke --targets node18-linux-x64 && node scripts/smoke-packaged-app.js dist/pkg-smoke/prompt-atelier",
+    "check:repository": "node scripts/check-committed-artifacts.js"
   },
   "keywords": [
     "prompt",
@@ -43,7 +46,21 @@
   "pkg": {
     "assets": [
       "frontend/**/*",
-      "data/**/*"
+      "data/categories.json",
+      "data/expert_prompts.json",
+      "data/logo设计提示词.md",
+      "data/presets.json",
+      "data/professional-terms.json",
+      "data/safety-config.json",
+      "data/templates.json",
+      "data/提示词优化.md",
+      "skills/index.json",
+      "skills/nippon-colors/README.md",
+      "skills/nippon-colors/SKILL.md",
+      "skills/nippon-colors/*.csv",
+      "skills/nippon-colors/config.json",
+      "skills/nippon-colors/*.js",
+      "skills/nippon-colors/*.py"
     ]
   },
   "engines": {

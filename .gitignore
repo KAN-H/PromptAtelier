@@ -69,6 +69,7 @@ __pycache__/
 package-lock.json.old
 yarn.lock.old
 .npm/
+.npm-cache-pr1/
 .yarn-integrity
 
 # Binary outputs
@@ -82,6 +83,40 @@ pids/
 *.pid
 *.seed
 *.pid.lock
+data/history.json
+data/favorites.json
+
+# User-generated application data
+/data/favorites.json
+/data/history.json
+/logs/*
+!/logs/.gitkeep
+
+# Private project and agent materials
+/docs/
+/rules/
+/PROGRESS.md
+.claude/
+**/.claude/
+AGENTS.md
+**/AGENTS.md
+CLAUDE.md
+**/CLAUDE.md
+
+# Generated repository analysis outputs
+.graphify/
+**/.graphify/
+graphify-out/
+**/graphify-out/
+.gitnexus/
+**/.gitnexus/
+.cache/
+**/.cache/
+
+# Experimental Skills not included in the public snapshot
+/skills/brand-strategy-advisor/
+/skills/color-theory-master/
+/skills/logo-critique-expert/
 
 # Local AI Models (Phase 13 - v5.0)
 # Keep directory structure but ignore large model files
